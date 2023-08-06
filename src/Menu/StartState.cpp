@@ -78,13 +78,19 @@ StartState::StartState() : _anim(0)
 	add(_text);
 	add(_cursor);
 
+	Uint8 text_clr = 0;
+#ifdef __APPLE__
+	// TODO: no idea why *OS needs an inverted value to get splash-screen text to be visible
+	//   investigate in more detail
+	text_clr = 255;
+#endif
 	// Set up objects
 	_text->initText(_font, _font, _lang);
-	_text->setColor(0);
+	_text->setColor(text_clr);
 	_text->setWordWrap(true);
 
 	_cursor->initText(_font, _font, _lang);
-	_cursor->setColor(0);
+	_cursor->setColor(text_clr);
 	_cursor->setText("_");
 
 	_timer->onTimer((StateHandler)&StartState::animate);

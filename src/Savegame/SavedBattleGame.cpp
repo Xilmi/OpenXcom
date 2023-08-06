@@ -193,18 +193,21 @@ void SavedBattleGame::load(const YAML::Node &node, Mod *mod, SavedGame* savedGam
 	else
 	{
 		// load key to how the tile data was saved
+		const Tile::SerializationKey def = Tile::SerializationKey::defaultKey();
+
 		Tile::SerializationKey serKey;
 		size_t totalTiles = node["totalTiles"].as<size_t>();
 
-		memset(&serKey, 0, sizeof(Tile::SerializationKey));
-		serKey.index = node["tileIndexSize"].as<char>(serKey.index);
-		serKey.totalBytes = node["tileTotalBytesPer"].as<Uint32>(serKey.totalBytes);
-		serKey._fire = node["tileFireSize"].as<char>(serKey._fire);
-		serKey._smoke = node["tileSmokeSize"].as<char>(serKey._smoke);
-		serKey._mapDataID = node["tileIDSize"].as<char>(serKey._mapDataID);
-		serKey._mapDataSetID = node["tileSetIDSize"].as<char>(serKey._mapDataSetID);
-		serKey.boolFields = node["tileBoolFieldsSize"].as<char>(1); // boolean flags used to be stored in an unmentioned byte (Uint8) :|
-
+		serKey.index = node["tileIndexSize"].as<char>(def.index);
+		serKey.totalBytes = node["tileTotalBytesPer"].as<Uint32>(def.totalBytes);
+		serKey._fire = node["tileFireSize"].as<char>(def._fire);
+		serKey._smoke = node["tileSmokeSize"].as<char>(def._smoke);
+		serKey._mapDataID = node["tileIDSize"].as<char>(def._mapDataID);
+		serKey._mapDataSetID = node["tileSetIDSize"].as<char>(def._mapDataSetID);
+		serKey.boolFields = node["tileBoolFieldsSize"].as<char>(def.boolFields); // boolean flags used to be stored in an unmentioned byte (Uint8) :|
+		serKey._lastExploredByHostile = node["lastExploredByHostile"].as<int>(def._lastExploredByHostile);
+		serKey._lastExploredByNeutral = node["lastExploredByNeutral"].as<int>(def._lastExploredByNeutral);
+		serKey._lastExploredByPlayer = node["lastExploredByPlayer"].as<int>(def._lastExploredByPlayer);
 		// load binary tile data!
 		YAML::Binary binTiles = node["binTiles"].as<YAML::Binary>();
 
@@ -623,16 +626,21 @@ YAML::Node SavedBattleGame::save() const
 		}
 	}
 #else
-	// first, write out the field sizes we're going to use to write the tile data
-	node["tileIndexSize"] = static_cast<char>(Tile::serializationKey.index);
-	node["tileTotalBytesPer"] = Tile::serializationKey.totalBytes;
-	node["tileFireSize"] = static_cast<char>(Tile::serializationKey._fire);
-	node["tileSmokeSize"] = static_cast<char>(Tile::serializationKey._smoke);
-	node["tileIDSize"] = static_cast<char>(Tile::serializationKey._mapDataID);
-	node["tileSetIDSize"] = static_cast<char>(Tile::serializationKey._mapDataSetID);
-	node["tileBoolFieldsSize"] = static_cast<char>(Tile::serializationKey.boolFields);
+	const Tile::SerializationKey def = Tile::SerializationKey::defaultKey();
 
-	size_t tileDataSize = Tile::serializationKey.totalBytes * _mapsize_z * _mapsize_y * _mapsize_x;
+	// first, write out the field sizes we're going to use to write the tile data
+	node["tileIndexSize"] = static_cast<char>(def.index);
+	node["tileTotalBytesPer"] = def.totalBytes;
+	node["tileFireSize"] = static_cast<char>(def._fire);
+	node["tileSmokeSize"] = static_cast<char>(def._smoke);
+	node["tileIDSize"] = static_cast<char>(def._mapDataID);
+	node["tileSetIDSize"] = static_cast<char>(def._mapDataSetID);
+	node["tileBoolFieldsSize"] = static_cast<char>(def.boolFields);
+	node["lastExploredByPlayer"] = static_cast<char>(def._lastExploredByPlayer);
+	node["lastExploredByNeutral"] = static_cast<char>(def._lastExploredByNeutral);
+	node["lastExploredByHostile"] = static_cast<char>(def._lastExploredByHostile);
+
+	size_t tileDataSize = def.totalBytes * _mapsize_z * _mapsize_y * _mapsize_x;
 	Uint8* tileData = (Uint8*) calloc(tileDataSize, 1);
 	Uint8* w = tileData;
 
@@ -640,15 +648,15 @@ YAML::Node SavedBattleGame::save() const
 	{
 		if (!_tiles[i].isVoid())
 		{
-			serializeInt(&w, Tile::serializationKey.index, i);
+			serializeInt(&w, def.index, i);
 			_tiles[i].saveBinary(&w);
 		}
 		else
 		{
-			tileDataSize -= Tile::serializationKey.totalBytes;
+			tileDataSize -= def.totalBytes;
 		}
 	}
-	node["totalTiles"] = tileDataSize / Tile::serializationKey.totalBytes; // not strictly necessary, just convenient
+	node["totalTiles"] = tileDataSize / def.totalBytes; // not strictly necessary, just convenient
 	node["binTiles"] = YAML::Binary(tileData, tileDataSize);
 	free(tileData);
 #endif

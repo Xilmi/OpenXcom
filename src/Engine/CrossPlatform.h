@@ -133,6 +133,16 @@ namespace CrossPlatform
 	std::string getExeFilename(bool includingPath);
 	/// Starts the update process.
 	void startUpdateProcess();
+
+	// in Release, do nothing. in Debug, crash out
+	[[noreturn]] inline void unreachable()
+	{
+	#ifdef _WIN32 // MSVC
+	    __assume(false);
+	#else  // GCC, Clang
+		__builtin_unreachable();
+	#endif
+	}
 }
 
 }

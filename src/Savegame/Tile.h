@@ -60,9 +60,9 @@ public:
 	/// Register all useful function used by script.
 	static void ScriptRegister(ScriptParserBase* parser);
 
-	static struct SerializationKey
+	typedef struct SerializationKey
 	{
-		// how many bytes to store for each variable or each member of array of the same name
+
 		Uint8 index; // for indexing the actual tile array
 		Uint8 _mapDataSetID;
 		Uint8 _mapDataID;
@@ -73,7 +73,9 @@ public:
 		Uint16 _lastExploredByNeutral;
 		Uint16 _lastExploredByPlayer;
 		Uint32 totalBytes; // per structure, including any data not mentioned here and accounting for all array members!
-	} serializationKey;
+
+		static const SerializationKey defaultKey();
+	} SerializationKey;
 
 	static const int NOT_CALCULATED = -1;
 

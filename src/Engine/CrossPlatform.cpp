@@ -197,8 +197,14 @@ void showError(const std::string &error)
 		std::string nError = '"' + error + '"';
 		Unicode::replace(nError, "\n", "\\n");
 		std::string cmd = errorDlg + nError;
+
+	// TODO: *OS has its own mechanisms availiable
+	//  for message boxes, use them here
+	#ifndef __APPLE__
 		if (system(cmd.c_str()) != 0)
 			std::cerr << error << std::endl;
+	#endif
+
 	}
 #endif
 	Log(LOG_FATAL) << error;

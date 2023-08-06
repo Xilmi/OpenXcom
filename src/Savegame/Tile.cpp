@@ -18,6 +18,7 @@
  */
 #include "Tile.h"
 #include <algorithm>
+#include <cassert>
 #include "../Mod/MapData.h"
 #include "../Mod/MapDataSet.h"
 #include "../Engine/SurfaceSet.h"
@@ -36,19 +37,20 @@
 namespace OpenXcom
 {
 
-/// How many bytes various fields use in a serialized tile. See header.
-Tile::SerializationKey Tile::serializationKey =
-{4, // index
- 2, // _mapDataSetID, four of these
- 2, // _mapDataID, four of these
- 1, // _fire
- 1, // _smoke
- 1,	// one 8-bit bool field
- 2, // _lastExploredByHostile
- 2, // _lastExploredByNeutral
- 2, // _lastExploredByPlayer
- 4 + 2*4 + 2*4 + 1 + 1 + 1 + 2 + 2 + 2// total bytes to save one tile
-};
+const Tile::SerializationKey Tile::SerializationKey::defaultKey() {
+	return {
+		.index = 4,
+		._mapDataSetID = 2,
+		._mapDataID = 2, // four of these
+		._smoke = 1,
+		._fire = 1,
+		.boolFields = 1, // 8-bit bool field
+		._lastExploredByHostile = 2,
+		._lastExploredByNeutral = 2,
+		._lastExploredByPlayer = 2,
+		.totalBytes = 4 + 2*4 + 2*4 + 1 + 1 + 1 + 2 + 2 + 2,
+	};
+}
 
 /**
  * constructor
@@ -100,9 +102,12 @@ void Tile::load(const YAML::Node &node)
 	}
 	_fire = node["fire"].as<int>(_fire);
 	_smoke = node["smoke"].as<int>(_smoke);
-	_lastExploredByHostile = node["lastExploredByHostile"].as<int>(_lastExploredByHostile);
-	_lastExploredByNeutral = node["lastExploredByNeutral"].as<int>(_lastExploredByNeutral);
-	_lastExploredByPlayer = node["lastExploredByPlayer"].as<int>(_lastExploredByPlayer);
+
+	const Tile::SerializationKey def = Tile::SerializationKey::defaultKey();
+	_lastExploredByHostile = node["lastExploredByHostile"].as<int>(def._lastExploredByHostile);
+	_lastExploredByNeutral = node["lastExploredByNeutral"].as<int>(def._lastExploredByNeutral);
+	_lastExploredByPlayer = node["lastExploredByPlayer"].as<int>(def._lastExploredByPlayer);
+
 	if (node["discovered"])
 	{
 		for (int i = 0; i < 3; i++)
@@ -208,25 +213,27 @@ YAML::Node Tile::save() const
  */
 void Tile::saveBinary(Uint8** buffer) const
 {
-	serializeInt(buffer, serializationKey._mapDataID, _mapData->ID[0]);
-	serializeInt(buffer, serializationKey._mapDataID, _mapData->ID[1]);
-	serializeInt(buffer, serializationKey._mapDataID, _mapData->ID[2]);
-	serializeInt(buffer, serializationKey._mapDataID, _mapData->ID[3]);
-	serializeInt(buffer, serializationKey._mapDataSetID, _mapData->SetID[0]);
-	serializeInt(buffer, serializationKey._mapDataSetID, _mapData->SetID[1]);
-	serializeInt(buffer, serializationKey._mapDataSetID, _mapData->SetID[2]);
-	serializeInt(buffer, serializationKey._mapDataSetID, _mapData->SetID[3]);
+	const Tile::SerializationKey def = Tile::SerializationKey::defaultKey();
 
-	serializeInt(buffer, serializationKey._smoke, _smoke);
-	serializeInt(buffer, serializationKey._fire, _fire);
+	serializeInt(buffer, def._mapDataID, _mapData->ID[0]);
+	serializeInt(buffer, def._mapDataID, _mapData->ID[1]);
+	serializeInt(buffer, def._mapDataID, _mapData->ID[2]);
+	serializeInt(buffer, def._mapDataID, _mapData->ID[3]);
+	serializeInt(buffer, def._mapDataSetID, _mapData->SetID[0]);
+	serializeInt(buffer, def._mapDataSetID, _mapData->SetID[1]);
+	serializeInt(buffer, def._mapDataSetID, _mapData->SetID[2]);
+	serializeInt(buffer, def._mapDataSetID, _mapData->SetID[3]);
+
+	serializeInt(buffer, def._smoke, _smoke);
+	serializeInt(buffer, def._fire, _fire);
 
 	Uint8 boolFields = (_objectsCache[O_WESTWALL].discovered?1:0) + (_objectsCache[O_NORTHWALL].discovered?2:0) + (_objectsCache[O_FLOOR].discovered?4:0);
 	boolFields |= isUfoDoorOpen(O_WESTWALL) ? 8 : 0; // west
 	boolFields |= isUfoDoorOpen(O_NORTHWALL) ? 0x10 : 0; // north?
-	serializeInt(buffer, serializationKey.boolFields, boolFields);
-	serializeInt(buffer, serializationKey._lastExploredByHostile, _lastExploredByHostile);
-	serializeInt(buffer, serializationKey._lastExploredByNeutral, _lastExploredByNeutral);
-	serializeInt(buffer, serializationKey._lastExploredByPlayer, _lastExploredByPlayer);
+	serializeInt(buffer, def.boolFields, boolFields);
+	serializeInt(buffer, def._lastExploredByHostile, _lastExploredByHostile);
+	serializeInt(buffer, def._lastExploredByNeutral, _lastExploredByNeutral);
+	serializeInt(buffer, def._lastExploredByPlayer, _lastExploredByPlayer);
 }
 
 /**

@@ -159,14 +159,12 @@ void create()
 	_info.push_back(OptionInfo("mousewheelSpeed", &mousewheelSpeed, 3, "STR_MOUSEWHEEL_SPEED", "STR_GENERAL"));
 	_info.push_back(OptionInfo("changeValueByMouseWheel", &changeValueByMouseWheel, 0, "STR_CHANGEVALUEBYMOUSEWHEEL", "STR_GENERAL"));
 	_info.push_back(OptionInfo("soldierDiaries", &soldierDiaries, true));
-	_info.push_back(OptionInfo("showCraftHangar", &showCraftHangar, false, "STR_SHOW_CRAFT_HANGAR", "STR_GENERAL"));	
-	
+	_info.push_back(OptionInfo("showCraftHangar", &showCraftHangar, false, "STR_SHOW_CRAFT_HANGAR", "STR_GENERAL"));
+
 // this should probably be any small screen touch-device, i don't know the defines for all of them so i'll cover android and IOS as i imagine they're more common
 #ifdef __ANDROID_API__
 	_info.push_back(OptionInfo("maximizeInfoScreens", &maximizeInfoScreens, true, "STR_MAXIMIZE_INFO_SCREENS", "STR_GENERAL"));
 #elif __APPLE__
-	// todo: ask grussel how badly i messed this up.
-	#include "TargetConditionals.h"
 	#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
 		_info.push_back(OptionInfo("maximizeInfoScreens", &maximizeInfoScreens, true, "STR_MAXIMIZE_INFO_SCREENS", "STR_GENERAL"));
 	#else
