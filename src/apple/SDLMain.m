@@ -52,6 +52,10 @@ static NSString *getApplicationName(void)
 @end
 
 @implementation NSApplication (SDLApplication)
+// TODO: should probably fix this, instead of supressing the warning
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-protocol-method-implementation"
+
 /* Invoked from the Quit menu item */
 - (void)terminate:(id)__unused sender
 {
@@ -61,6 +65,9 @@ static NSString *getApplicationName(void)
     SDL_PushEvent(&event);
 }
 @end
+
+#pragma clang diagnostic pop
+
 
 /* The main class of the application, the application's delegate */
 @implementation SDLMain
@@ -130,7 +137,7 @@ static void setApplicationMenu(void)
     [appleMenu addItemWithTitle:title action:@selector(hide:) keyEquivalent:@"h"];
 
     menuItem = (NSMenuItem *)[appleMenu addItemWithTitle:@"Hide Others" action:@selector(hideOtherApplications:) keyEquivalent:@"h"];
-    [menuItem setKeyEquivalentModifierMask:(NSAlternateKeyMask|NSCommandKeyMask)];
+    [menuItem setKeyEquivalentModifierMask:(NSEventModifierFlagOption|NSEventModifierFlagCommand)];
 
     [appleMenu addItemWithTitle:@"Show All" action:@selector(unhideAllApplications:) keyEquivalent:@""];
 
@@ -196,7 +203,7 @@ static void CustomApplicationMain (__unused int argc, __unused char **argv)
 
     /* Create SDLMain and make it the app delegate */
     sdlMain = [[SDLMain alloc] init];
-    [NSApp setDelegate:sdlMain];
+    [NSApp setDelegate:(id)sdlMain];
 
     /* Start the main event loop */
     [NSApp run];
