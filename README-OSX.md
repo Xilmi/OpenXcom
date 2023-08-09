@@ -5,15 +5,17 @@ To successfully build an OpenXcom OSX bundle you will need to ensure all the rel
 
 The dependencies you require are following:
 - cmake, version 3.12.0 or later
-- SDL (libsdl1.2)
+- SDL 1.2 compatibility layer (libsdl1.2)
+- SDL 2.0 (libsdl1.2)
 - SDL_mixer (libsdl-mixer1.2)
 - SDL_gfx (libsdl-gfx1.2), version 2.0.22 or later
 - SDL_image (libsdl-image1.2)
-- yaml-cpp, version 0.5 or later
+- webp, version 1.3.1 or later
+- yaml-cpp, version 0.7.0 or later
 
 We recommend using [Homebrew](https://brew.sh) to facilitate this.  With a working brew utility installed, run the following:
 ```
-$ brew install cmake yaml-cpp --with-static-lib sdl sdl_gfx sdl_image sdl_mixer --with-flac --with-libmikmod --with-libvorbis --with-static-lib
+$ brew install cmake sdl12-compat sdl2 sdl_gfx sdl_image sdl_mixer yaml-cpp webp
 ```
 This should install all of these necessary dependencies to their appropriate place under /usr/local.
 
