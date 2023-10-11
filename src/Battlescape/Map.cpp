@@ -847,7 +847,7 @@ void Map::drawTerrain(Surface *surface)
 		movingUnitPosition = movingUnit->getPosition();
 
 		//Update FOW if player unit moving
-		if (Options::oxceFOW)
+		if (Options::oxceFOW == 2)
 			if (movingUnit->getFaction() == FACTION_PLAYER)
 				_save->updateVisibleTiles();
 	}
