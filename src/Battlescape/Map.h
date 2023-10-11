@@ -59,7 +59,7 @@ struct UnitWalkingOffset
 class Map : public InteractiveSurface
 {
 private:
-	bool _thisTileVisible;
+	bool _thisTileFOW;
 	static const int SCROLL_INTERVAL = 15;
 	static const int FADE_INTERVAL = 23;
 	static const int NIGHT_VISION_SHADE = 4;

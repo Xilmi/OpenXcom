@@ -3680,7 +3680,7 @@ void SavedBattleGame::ScriptRegister(ScriptParserBase* parser)
 
 /*
 * Used for FOW updates
-* Called in BattleGame popState and init, and when unit is moving in map.cpp
+* Called in map.cpp
 */
 void SavedBattleGame::updateVisibleTiles()
 {
@@ -3694,11 +3694,23 @@ void SavedBattleGame::updateVisibleTiles()
 
 /*
 *
-* Returns true if tile is visible to player
-*/
-bool SavedBattleGame::isTileVisible(Tile* sometile)
+ *Returns true if FOW should be enabled for a given tile
+ *
+ *						0 FOW off
+ * Options::oxceFOW ==	1 update FOW per turn
+ *						2 live update FOW
+ */
+bool SavedBattleGame::isTileFOW(Tile* sometile)
 {
-	return (_currentlyVisibleTiles.find(sometile) != _currentlyVisibleTiles.end());
+	if (Options::oxceFOW == 0)
+		return false;
+	else if (Options::oxceFOW == 1)
+		if (sometile->getLastExplored(FACTION_PLAYER) == _turn)
+			return false;
+		else
+			return true;
+	else
+		return (_currentlyVisibleTiles.find(sometile) == _currentlyVisibleTiles.end());
 }
 
 
