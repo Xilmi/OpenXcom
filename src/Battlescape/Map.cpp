@@ -163,7 +163,7 @@ Map::Map(Game *game, int width, int height, int x, int y, int visibleMapHeight) 
 	_cacheHasLOS = -1;
 	_cacheAccuracy = -1;
 
-	_thisTileVisible = false;
+	_thisTileFOW = false;
 	_nightVisionOn = false;
 	if (Options::oxceToggleNightVisionType == 2)
 	{
@@ -694,9 +694,6 @@ void Map::drawUnit(UnitSprite &unitSprite, Tile *unitTile, Tile *currTile, Posit
  */
 void Map::drawTerrain(Surface *surface)
 {
-	if (Options::oxceFOW)
-		_save->updateVisibleTiles();
-
 	_isAltPressed = _game->isAltPressed(true);
 	int frameNumber = 0;
 	SurfaceRaw<const Uint8> tmpSurface;
@@ -850,10 +847,24 @@ void Map::drawTerrain(Surface *surface)
 		movingUnitPosition = movingUnit->getPosition();
 
 		//Update FOW if player unit moving
-		if (Options::oxceFOW)
+		if (Options::oxceFOW == 2)
 			if (movingUnit->getFaction() == FACTION_PLAYER)
 				_save->updateVisibleTiles();
 	}
+
+
+	int oxceFOWshade = 0; // needs to be zero if FOW is off
+	if (Options::oxceFOW == 2)
+	{
+		_save->updateVisibleTiles();
+		oxceFOWshade = 4;
+	}
+	else if (Options::oxceFOW == 1)
+	{
+		oxceFOWshade = 4;
+	}
+
+
 
 	surface->lock();
 	const auto cameraPos = _camera->getMapOffset();
@@ -876,33 +887,18 @@ void Map::drawTerrain(Surface *surface)
 					auto isUnitMovingNearby = movingUnit && positionInRangeXY(movingUnitPosition, mapPosition, 2);
 
 
-					int oxceFOWshade = 0; // needs to be zero if FOW is off
+					
 					if (Options::oxceFOW > 0)
 					{
-						oxceFOWshade = 4;
-						if (Options::oxceFOW == 1)
+						_thisTileFOW = _save->isTileFOW(tile);
+
+						if (tile->isDiscovered(O_FLOOR) == false)
 						{
-							if (tile->getLastExplored(FACTION_PLAYER) == _save->getTurn())
-								_thisTileVisible = true;
-							else
-								_thisTileVisible = false;
+							_nvColor = colorBeforeFoW; // reset if previous tile was FOW... just in case
+							tileShade = 16;
+							obstacleShade = 16;
 						}
-						else
-							_thisTileVisible = _save->isTileVisible(tile);
-						if (_thisTileVisible)
-						{
-							tileShade = reShade(tile);
-							_nvColor = colorBeforeFoW; // reset if previous tile was FOW
-							obstacleShade = tileShade;
-							if (_showObstacles)
-							{
-								if (tile->isObstacle())
-								{
-									obstacleShade = getShadePulseForFrame(tileShade, _animFrame);
-								}
-							}
-						}
-						else if (tile->isDiscovered(O_FLOOR))
+						else if (_thisTileFOW)
 						{
 							tileShade = reShade(tile) + oxceFOWshade; // make non visible tiles darker
 							_nvColor = Options::oxceFOWColor;        // set FOW color
@@ -915,10 +911,18 @@ void Map::drawTerrain(Surface *surface)
 						}
 						else
 						{
-							_nvColor = colorBeforeFoW; // reset if previous tile was FOW... just in case
-							tileShade = 16;
-							obstacleShade = 16;
+							tileShade = reShade(tile);
+							_nvColor = colorBeforeFoW; // reset if previous tile was FOW
+							obstacleShade = tileShade;
+							if (_showObstacles)
+							{
+								if (tile->isObstacle())
+								{
+									obstacleShade = getShadePulseForFrame(tileShade, _animFrame);
+								}
+							}
 						}
+
 					}
 					else // No Fog of War - normal shade behavior below -
 					{
@@ -939,10 +943,9 @@ void Map::drawTerrain(Surface *surface)
 							tileShade = 16;
 							obstacleShade = 16;
 						}
-					} 
-					tileColor = tile->getMarkerColor();
-								
+					}
 
+					tileColor = tile->getMarkerColor();
 
 					// Draw floor
 					tmpSurface = tile->getSprite(O_FLOOR);
@@ -1011,10 +1014,10 @@ void Map::drawTerrain(Surface *surface)
 							auto wallShade = getWallShade(O_WESTWALL, tile);
 							if (tile->getObstacle(O_WESTWALL))
 								Surface::blitRaw(surface, tmpSurface, screenPosition.x, screenPosition.y - tile->getYOffset(O_WESTWALL), obstacleShade, false, _nvColor);
-							else if (_thisTileVisible)
-								Surface::blitRaw(surface, tmpSurface, screenPosition.x, screenPosition.y - tile->getYOffset(O_WESTWALL), wallShade, false, _nvColor);
-							else
+							else if (_thisTileFOW)
 								Surface::blitRaw(surface, tmpSurface, screenPosition.x, screenPosition.y - tile->getYOffset(O_WESTWALL), wallShade + oxceFOWshade, false, _nvColor);
+							else
+								Surface::blitRaw(surface, tmpSurface, screenPosition.x, screenPosition.y - tile->getYOffset(O_WESTWALL), wallShade, false, _nvColor);
 						}
 						// Draw north wall
 						tmpSurface = tile->getSprite(O_NORTHWALL);
@@ -1023,10 +1026,10 @@ void Map::drawTerrain(Surface *surface)
 							auto wallShade = getWallShade(O_NORTHWALL, tile);
 							if (tile->getObstacle(O_NORTHWALL))
 								Surface::blitRaw(surface, tmpSurface, screenPosition.x, screenPosition.y - tile->getYOffset(O_NORTHWALL), obstacleShade, bool(tile->getSprite(O_WESTWALL)), _nvColor);
-							else if (_thisTileVisible)
-								Surface::blitRaw(surface, tmpSurface, screenPosition.x, screenPosition.y - tile->getYOffset(O_NORTHWALL), wallShade, bool(tile->getSprite(O_WESTWALL)), _nvColor);
-							else
+							else if (_thisTileFOW)
 								Surface::blitRaw(surface, tmpSurface, screenPosition.x, screenPosition.y - tile->getYOffset(O_NORTHWALL), wallShade + oxceFOWshade, bool(tile->getSprite(O_WESTWALL)), _nvColor);
+							else
+								Surface::blitRaw(surface, tmpSurface, screenPosition.x, screenPosition.y - tile->getYOffset(O_NORTHWALL), wallShade, bool(tile->getSprite(O_WESTWALL)), _nvColor);
 						}
 						// Draw object
 						tmpSurface = tile->getSprite(O_OBJECT);

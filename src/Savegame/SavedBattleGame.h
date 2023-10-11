@@ -652,10 +652,10 @@ public:
 
 
 	/// used for FOW updates
-	/// called in BattleGame popState and init, and when unit is moving in map.cpp
+	/// called in map.cpp
 	void updateVisibleTiles();
-	/// Returns if tile is visible to player
-	bool isTileVisible(Tile* sometile);
+	/// Returns whether the tile should have FOW
+	bool isTileFOW(Tile* sometile);
 };
 
 }
