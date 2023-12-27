@@ -709,6 +709,12 @@ BattlescapeState::BattlescapeState() :
 	_battleGame = new BattlescapeGame(_save, this);
 
 	_barHealthColor = _barHealth->getColor();
+
+	// prime smoke grenade
+	_btnStats->onKeyboardPress((ActionHandler)&BattlescapeState::primeFlare, Options::keyPrimeFlare);
+	_btnStats->onKeyboardPress((ActionHandler)&BattlescapeState::primeSmokeGrenade, Options::keyPrimeSmokeGrenade);
+	_btnStats->onKeyboardPress((ActionHandler)&BattlescapeState::primeGrenade, Options::keyPrimeGrenade);
+
 }
 
 
@@ -3834,6 +3840,182 @@ void BattlescapeState::btnAIClick(Action *action)
 		if (bu->getFaction() == FACTION_PLAYER) {units.push_back(bu);}
 	}
 	_game->pushState(new SoldiersAIState(units));
+}
+
+/**
+ * Picks and primes flare.
+ */
+void BattlescapeState::primeFlare(Action* action)
+{
+	primeAnyGrenade(OpenXcom::BT_FLARE, OpenXcom::DT_NONE);
+}
+/**
+ * Picks and primes smoke grenade.
+ */
+void BattlescapeState::primeSmokeGrenade(Action* action)
+{
+	primeAnyGrenade(OpenXcom::BT_GRENADE, OpenXcom::DT_SMOKE);
+}
+/**
+ * Picks and primes flare.
+ */
+void BattlescapeState::primeGrenade(Action* action)
+{
+	primeAnyGrenade(OpenXcom::BT_GRENADE, OpenXcom::DT_HE);
+}
+/**
+ * Picks and primes flare, smoke grenade, grenade.
+ */
+void BattlescapeState::primeAnyGrenade(BattleType battleType, ItemDamageType damageType)
+{
+	if (!playableUnitSelected())
+		return;
+
+	// concession for touch devices:
+	// click on the item to cancel action, and don't pop up a menu to select a new one
+	// TODO: wrap this in an IFDEF ?
+	if (_battleGame->getCurrentAction()->targeting)
+	{
+		_battleGame->cancelCurrentAction();
+		return;
+	}
+
+	_battleGame->cancelCurrentAction();
+
+	// left hand inventory
+
+	OpenXcom::RuleInventory* leftHandInventory = _game->getMod()->getInventory("STR_LEFT_HAND");
+
+	// selected unit
+
+	OpenXcom::BattleUnit* unit = _save->getSelectedUnit();
+
+	// search for item
+
+	BattleItem* grenade = nullptr;
+	bool picked = false;
+	bool primed = false;
+
+	for (BattleItem* battleItem : *unit->getInventory())
+	{
+		const RuleItem* ruleItem = battleItem->getRules();
+
+		// skip unmatching items
+		// item should have given battleType and damageType
+
+		if (!(ruleItem->getBattleType() == battleType && (damageType == DT_NONE || ruleItem->getDamageType()->ResistType == damageType)))
+			continue;
+
+		if (battleItem->getSlot()->isLeftHand())
+		{
+			// item in left hand has top priority
+			grenade = battleItem;
+			picked = true;
+			if (battleItem->getFuseTimer() >= 0)
+			{
+				primed = true;
+			}
+			break;
+		}
+		else if (battleItem->getFuseTimer() >= 0)
+		{
+			// primed item has higher priority
+			if (!primed)
+			{
+				grenade = battleItem;
+				primed = true;
+			}
+		}
+		else if (grenade == nullptr)
+		{
+			grenade = battleItem;
+		}
+
+	}
+
+	if (grenade == nullptr)
+	{
+		warning("STR_NO_ITEM");
+		return;
+	}
+
+	// clear out left hand
+
+	BattleItem* leftHandItem = unit->getLeftHandWeapon();
+
+	if (!picked && leftHandItem != nullptr)
+	{
+		std::vector<OpenXcom::RuleInventory*> inventories;
+		inventories.push_back(_game->getMod()->getInventory("STR_RIGHT_SHOULDER"));
+		inventories.push_back(_game->getMod()->getInventory("STR_LEFT_SHOULDER"));
+		inventories.push_back(_game->getMod()->getInventory("STR_RIGHT_LEG"));
+		inventories.push_back(_game->getMod()->getInventory("STR_LEFT_LEG"));
+		inventories.push_back(_game->getMod()->getInventory("STR_BELT"));
+		inventories.push_back(_game->getMod()->getInventory("STR_BACK_PACK"));
+		inventories.push_back(_game->getMod()->getInventory("STR_GROUND"));
+
+		bool clearedLeftHand = false;
+
+		for (OpenXcom::RuleInventory* inventory : inventories)
+		{
+			BattleActionCost clearLeftHandCost{unit};
+			clearLeftHandCost.Time += leftHandItem->getMoveToCost(inventory);
+			if (clearLeftHandCost.haveTU() && unit->fitItemToInventory(inventory, leftHandItem))
+			{
+				clearLeftHandCost.spendTU();
+				clearedLeftHand = true;
+				break;
+			}
+
+		}
+
+		if (!clearedLeftHand)
+		{
+			warning("STR_NOT_ENOUGH_TIME_UNITS");
+			return;
+		}
+
+		updateSoldierInfo(false);
+
+	}
+
+	// move grenade to left hand
+
+	if (!picked)
+	{
+		BattleActionCost takeSmokeGrenadeCost{unit};
+		takeSmokeGrenadeCost.Time += grenade->getMoveToCost(leftHandInventory);
+
+		if (takeSmokeGrenadeCost.haveTU() && unit->fitItemToInventory(leftHandInventory, grenade))
+		{
+			takeSmokeGrenadeCost.spendTU();
+		}
+		else
+		{
+			warning("STR_NOT_ENOUGH_TIME_UNITS");
+			return;
+		}
+
+		updateSoldierInfo(false);
+
+	}
+
+	// prime grenade
+
+	if (grenade->getRules()->getFuseTimerType() != BFT_NONE && !primed)
+	{
+		if (!unit->spendTimeUnits(unit->getActionTUs(BA_PRIME, grenade).Time))
+		{
+			warning("STR_NOT_ENOUGH_TIME_UNITS");
+			return;
+		}
+
+		grenade->setFuseTimer(0);
+
+		updateSoldierInfo(false);
+
+	}
+
 }
 
 }

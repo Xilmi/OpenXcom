@@ -464,6 +464,11 @@ void create()
 	// display base detection probability in base info screen
 	_info.push_back(OptionInfo("baseDetectionProbability", &baseDetectionProbability, false, "STR_DISPLAY_BASE_DETECTION_PROBABILITY", "STR_GEOSCAPE"));
 
+	// prime grenades
+	_info.push_back(OptionInfo("keyPrimeFlare", &keyPrimeFlare, SDLK_SLASH, "STR_PRIME_FLARE", "STR_BATTLESCAPE"));
+	_info.push_back(OptionInfo("keyPrimeSmokeGrenade", &keyPrimeSmokeGrenade, SDLK_PERIOD, "STR_PRIME_SMOKE_GRENADE", "STR_BATTLESCAPE"));
+	_info.push_back(OptionInfo("keyPrimeGrenade", &keyPrimeGrenade, SDLK_COMMA, "STR_PRIME_GRENADE", "STR_BATTLESCAPE"));
+
 }
 
 // we can get fancier with these detection routines, but for now just look for

@@ -1089,3 +1089,7 @@ en-US:
   SECTOPOD_WEAPON: "Sectopod Weapon"
   ZOMBIE_WEAPON: "Zombie Weapon"
   ALIEN_PSI_WEAPON: "Alien Psi Weapon"
+  STR_PRIME_FLARE: "Pick flare"
+  STR_PRIME_SMOKE_GRENADE: "Pick and prime smoke grenade"
+  STR_PRIME_GRENADE: "Pick and prime grenade"
+

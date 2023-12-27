@@ -19,6 +19,7 @@
  */
 #include "../Engine/State.h"
 #include "Position.h"
+#include "../Mod/RuleItem.h"
 
 #include <vector>
 #include <string>
@@ -291,6 +292,13 @@ public:
 	
 	/// Handler for clicking the AI button.
 	void btnAIClick(Action *action);
+
+	/// Primes grenade (flair, smoke, regular).
+	void primeFlare(Action* action);
+	void primeSmokeGrenade(Action* action);
+	void primeGrenade(Action* action);
+	void primeAnyGrenade(BattleType battleType, ItemDamageType damageType);
+
 };
 
 }

@@ -500,3 +500,5 @@ en-US:
   STR_DISPLAY_BASE_DEFENSE_PROBABILITY_DESC: "Display base defense probability of destroying largests UFO instead of strength in base info screen."
   STR_DISPLAY_BASE_DETECTION_PROBABILITY: "Display base detection probability"
   STR_DISPLAY_BASE_DETECTION_PROBABILITY_DESC: "Display base detection probability instead facility count in base info screen."
+  STR_NO_ITEM: "No item."
+

@@ -156,3 +156,8 @@ OPT bool baseDefenseProbability;
 // display base detection probability in base info screen
 OPT bool baseDetectionProbability;
 
+// prime grenades
+OPT SDLKey keyPrimeFlare;
+OPT SDLKey keyPrimeSmokeGrenade;
+OPT SDLKey keyPrimeGrenade;
+
