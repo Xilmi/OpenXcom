@@ -293,11 +293,19 @@ public:
 	/// Handler for clicking the AI button.
 	void btnAIClick(Action *action);
 
-	/// Primes grenade (flair, smoke, regular).
-	void primeFlare(Action* action);
-	void primeSmokeGrenade(Action* action);
-	void primeGrenade(Action* action);
-	void primeAnyGrenade(BattleType battleType, ItemDamageType damageType);
+	/// Ready grenades
+	void readyLightGrenade(Action* action);
+	void readyHeavyGrenade(Action* action);
+	void readyProximityGrenade(Action* action);
+	void readySmokeGrenade(Action* action);
+	void readyFlare(Action* action);
+	void readyScanner(Action* action);
+	void readyMedikit(Action* action);
+	void clearLeftHand(Action* action);
+	void readyItem(BattleType battleType, ItemDamageType itemDamageType = DT_NONE, int minSelectWeight = 0, int maxSelectWeight = 0);
+	void takeItem(BattleItem* selectedItem);
+	void putItem();
+	void primeItem();
 
 };
 

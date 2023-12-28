@@ -157,7 +157,12 @@ OPT bool baseDefenseProbability;
 OPT bool baseDetectionProbability;
 
 // prime grenades
-OPT SDLKey keyPrimeFlare;
-OPT SDLKey keyPrimeSmokeGrenade;
-OPT SDLKey keyPrimeGrenade;
+OPT SDLKey keyReadyLightGrenade;
+OPT SDLKey keyReadyHeavyGrenade;
+OPT SDLKey keyReadyProximityGrenade;
+OPT SDLKey keyReadySmokeGrenade;
+OPT SDLKey keyReadyFlare;
+OPT SDLKey keyReadyScanner;
+OPT SDLKey keyReadyMedikit;
+OPT SDLKey keyClearLeftHand;
 
