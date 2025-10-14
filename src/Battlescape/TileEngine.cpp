@@ -3124,7 +3124,18 @@ TileEngine::ReactionScore TileEngine::determineReactionType(BattleUnit *unit, Ba
 				return reaction;
 			}
 		}
-		if (_save->canUseWeapon(weapon, unit, false, BA_SNAPSHOT))
+		if (_save->canUseWeapon(weapon, unit, false, BA_AKIMBOSHOT))
+		{
+			// has a gun capable of akimbo shot with ammo
+			if (weapon->getRules()->getBattleType() == BT_FIREARM &&
+				!weapon->getRules()->isOutOfRange(unit->distance3dToUnitSq(target)) &&
+				weapon->getAmmoForAction(BA_AKIMBOSHOT) &&
+				BattleActionCost(BA_AKIMBOSHOT, unit, weapon).haveTU())
+			{
+				setReaction(reaction, BA_AKIMBOSHOT, weapon);
+				return reaction;
+			}
+		} else if (_save->canUseWeapon(weapon, unit, false, BA_SNAPSHOT))
 		{
 			// has a gun capable of snap shot with ammo
 			if (weapon->getRules()->getBattleType() == BT_FIREARM &&

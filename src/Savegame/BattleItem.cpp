@@ -64,6 +64,7 @@ BattleItem::BattleItem(const RuleItem *rules, int *id) : _id(*id), _rules(rules)
 			_confAimedOrLaunch = _rules->getConfigAimed();
 			_confAuto = _rules->getConfigAuto();
 			_confSnap = _rules->getConfigSnap();
+			_confAkimbo = _rules->getConfigAkimbo();
 			bool showSelfAmmo = _rules->getClipSize() > 0;
 			for (int slot = 0; slot < RuleItem::AmmoSlotMax; ++slot)
 			{
@@ -71,6 +72,7 @@ BattleItem::BattleItem(const RuleItem *rules, int *id) : _id(*id), _rules(rules)
 				used |= (_confAimedOrLaunch && _confAimedOrLaunch->ammoSlot == slot);
 				used |= (_confAuto && _confAuto->ammoSlot == slot);
 				used |= (_confSnap && _confSnap->ammoSlot == slot);
+				used |= (_confAkimbo && _confAkimbo->ammoSlot == slot);
 				used |= (_confMelee && _confMelee->ammoSlot == slot);
 				if (_rules->getCompatibleAmmoForSlot(slot)->empty())
 				{
@@ -763,7 +765,7 @@ bool BattleItem::haveAnyAmmo() const
 	{
 		return getAmmoForAction(BA_AIMEDSHOT) ||
 			getAmmoForAction(BA_AUTOSHOT) ||
-			getAmmoForAction(BA_SNAPSHOT);
+			   getAmmoForAction(BA_SNAPSHOT) || getAmmoForAction(BA_AKIMBOSHOT);
 	}
 }
 
@@ -816,6 +818,7 @@ const RuleItemAction *BattleItem::getActionConf(BattleActionType action) const
 	case BA_AIMEDSHOT: return _confAimedOrLaunch;
 	case BA_AUTOSHOT: return _confAuto;
 	case BA_SNAPSHOT: return _confSnap;
+	case BA_AKIMBOSHOT: return _confAkimbo;
 	case BA_HIT: return _confMelee;
 	default: return nullptr;
 	}
@@ -932,7 +935,7 @@ void BattleItem::spendAmmoForAction(BattleActionType action, SavedBattleGame* sa
 	auto ammo = getAmmoForAction(action, nullptr, &spendPerShot);
 	if (ammo)
 	{
-		if (ammo->getRules()->getClipSize() > 0 && ammo->spendBullet(spendPerShot) == false || _rules->getBattleType() != BT_FIREARM)
+		if (ammo->getRules()->getClipSize() > 0 && ammo->spendBullet(spendPerShot) == false && _rules->getBattleType() != BT_FIREARM)
 		{
 			save->removeItem(ammo);
 			ammo->setIsAmmo(false);
@@ -1578,6 +1581,7 @@ void BattleItem::ScriptRegister(ScriptParserBase* parser)
 
 	bi.addCustomConst("BA_AUTOSHOT", BA_AUTOSHOT);
 	bi.addCustomConst("BA_SNAPSHOT", BA_SNAPSHOT);
+	bi.addCustomConst("BA_AKIMBOSHOT", BA_AKIMBOSHOT);
 	bi.addCustomConst("BA_AIMEDSHOT", BA_AIMEDSHOT);
 	bi.addCustomConst("BA_LAUNCH", BA_LAUNCH);
 	bi.addCustomConst("BA_HIT", BA_HIT);

@@ -713,3 +713,5 @@ en-US:
   STR_FOR_DIFFICULTY: "for difficulty: {0}"
 #UfopaediaSelectState.cpp
   STR_NOT_AWARDED_YET: "Not awarded yet"
+  STR_AKIMBO_SHOT: "Akimbo Shot"
+  STR_RESERVE_TIME_UNITS_FOR_AKIMBO_SHOT: "Reserve time for akimbo shot"

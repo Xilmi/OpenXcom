@@ -58,7 +58,7 @@ private:
 	BattlescapeButton *_btnAI;
 	bool _touchButtonsEnabled, _touchButtonsEnabledLastTurn;
 	InteractiveSurface *_btnStats;
-	BattlescapeButton *_btnReserveNone, *_btnReserveSnap, *_btnReserveAimed, *_btnReserveAuto, *_btnReserveKneel, *_btnZeroTUs;
+	BattlescapeButton *_btnReserveNone, *_btnReserveSnap, *_btnReserveAkimbo, *_btnReserveAimed, *_btnReserveAuto, *_btnReserveKneel, *_btnZeroTUs;
 	InteractiveSurface *_btnLeftHandItem, *_btnRightHandItem;
 
 	static const int SPECIAL_BUTTONS_MAX = 3;

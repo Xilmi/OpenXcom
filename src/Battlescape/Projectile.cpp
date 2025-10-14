@@ -129,6 +129,9 @@ Position Projectile::calculateMissingTrajectoryRA(const Position &origin, const 
 	case BA_SNAPSHOT:
 		shotTypeDeviation = AccuracyMod->snapDeviation[idx];
 		break;
+	case BA_AKIMBOSHOT:
+		shotTypeDeviation = AccuracyMod->akimboDeviation[idx];
+		break;
 	case BA_AUTOSHOT:
 		shotTypeDeviation = AccuracyMod->autoDeviation[idx];
 		break;

@@ -461,7 +461,7 @@ void BattlescapeGame::handleAI(BattleUnit *unit)
 		statePushBack(new UnitTurnBState(this, action));
 	}
 
-	if (action.type == BA_SNAPSHOT || action.type == BA_AUTOSHOT || action.type == BA_AIMEDSHOT || action.type == BA_THROW || action.type == BA_HIT || action.type == BA_MINDCONTROL || action.type == BA_USE || action.type == BA_PANIC || action.type == BA_LAUNCH)
+	if (action.type == BA_AKIMBOSHOT || action.type == BA_SNAPSHOT || action.type == BA_AUTOSHOT || action.type == BA_AIMEDSHOT || action.type == BA_THROW || action.type == BA_HIT || action.type == BA_MINDCONTROL || action.type == BA_USE || action.type == BA_PANIC || action.type == BA_LAUNCH)
 	{
 		ss.clear();
 		ss << "Attack type=" << action.type << " target="<< action.target << " weapon=" << action.weapon->getRules()->getType();
@@ -1468,6 +1468,7 @@ bool BattlescapeGame::checkReservedTU(BattleUnit *bu, int tu, int energy, bool j
 		cost.Time = tu; //override original
 		switch (cost.type)
 		{
+		case BA_AKIMBOSHOT: cost.Time += (bu->getBaseStats()->tu / 3); break; // 33%
 		case BA_SNAPSHOT: cost.Time += (bu->getBaseStats()->tu / 3); break; // 33%
 		case BA_AUTOSHOT: cost.Time += ((bu->getBaseStats()->tu / 5)*2); break; // 40%
 		case BA_AIMEDSHOT: cost.Time += (bu->getBaseStats()->tu / 2); break; // 50%
@@ -1484,7 +1485,7 @@ bool BattlescapeGame::checkReservedTU(BattleUnit *bu, int tu, int energy, bool j
 		cost.updateTU();
 	}
 	// likewise, if we don't have a snap shot available, try aimed.
-	if (cost.Time == 0 && cost.type == BA_SNAPSHOT)
+	if (cost.Time == 0 && cost.type == BA_SNAPSHOT || cost.type == BA_AKIMBOSHOT)
 	{
 		cost.type = BA_AIMEDSHOT;
 		cost.updateTU();
@@ -1530,6 +1531,7 @@ bool BattlescapeGame::checkReservedTU(BattleUnit *bu, int tu, int energy, bool j
 			{
 				switch (_save->getTUReserved())
 				{
+				case BA_AKIMBOSHOT: _parentState->warning("STR_TIME_UNITS_RESERVED_FOR_AKIMBO_SHOT"); break; //future plans
 				case BA_SNAPSHOT: _parentState->warning("STR_TIME_UNITS_RESERVED_FOR_SNAP_SHOT"); break;
 				case BA_AUTOSHOT: _parentState->warning("STR_TIME_UNITS_RESERVED_FOR_AUTO_SHOT"); break;
 				case BA_AIMEDSHOT: _parentState->warning("STR_TIME_UNITS_RESERVED_FOR_AIMED_SHOT"); break;
@@ -1972,6 +1974,39 @@ void BattlescapeGame::primaryAction(Position pos)
 			_currentAction.waypoints.push_back(pos);
 			getMap()->getWaypoints()->clear();
 			getMap()->getWaypoints()->push_back(pos);
+		}
+		else if 			/* AKIMBO SHOOTING */
+			(_currentAction.type == BA_AKIMBOSHOT)
+		{
+			int tuAkimboM = _currentAction.actor->getActionTUs(BA_AKIMBOSHOT, _currentAction.weapon).Time;
+			int tuAkimboOp = _currentAction.actor->getActionTUs(BA_AKIMBOSHOT, _currentAction.actor->getOpositeHandWeapon()).Time;
+			tuAkimboM += tuAkimboOp;
+			if (_currentAction.actor->getTimeUnits() < tuAkimboM)
+			{
+				_parentState->warning("STR_NOT_ENOUGH_TIME_UNITS");
+				_parentState->getBattleGame()->popState();
+				return;
+			}
+			_currentAction.target = pos;
+			getMap()->setCursorType(CT_NONE);
+			if (Options::battleConfirmFireMode)
+			{
+				_currentAction.waypoints.clear();
+				getMap()->getWaypoints()->clear();
+			}
+			_parentState->getGame()->getCursor()->setVisible(false);
+			_currentAction.cameraPosition = getMap()->getCamera()->getMapOffset();
+			_currentAction.updateTU(); // need to refresh Weapon cost for correct TU usage for current hand weapon in 2nd iteration
+			_states.push_back(new ProjectileFlyBState(this, _currentAction));
+			statePushFront(new UnitTurnBState(this, _currentAction)); // first of all turn towards the target
+			_currentAction.target = pos;
+			BattleItem* sweapon = _currentAction.weapon;
+			_currentAction.cameraPosition = getMap()->getCamera()->getMapOffset();
+			_currentAction.weapon = _currentAction.actor->getOpositeHandWeapon();
+			_currentAction.updateTU(); // need to refresh Weapon cost for correct TU usage for current hand weapon
+			_states.push_back(new ProjectileFlyBState(this, _currentAction));
+			statePushFront(new UnitTurnBState(this, _currentAction)); // first of all turn towards the target, overwise possible to catch exeption to clip size null pointer
+			if (sweapon) _currentAction.weapon = sweapon; // checking sweapon for null and return from oposite to origin hand weapon after shooting serie
 		}
 		else
 		{

@@ -75,6 +75,13 @@ void UnitPanicBState::think()
 
 				if (!canShoot)
 				{
+					ba.type = BA_AKIMBOSHOT;
+					ba.updateTU();
+					canShoot = ba.haveTU() && _parent->getSave()->canUseWeapon(ba.weapon, ba.actor, _berserking, ba.type);
+				}
+
+				if (!canShoot)
+				{
 					ba.type = BA_SNAPSHOT;
 					ba.updateTU();
 					canShoot = ba.haveTU() && _parent->getSave()->canUseWeapon(ba.weapon, ba.actor, _berserking, ba.type);

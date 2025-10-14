@@ -199,23 +199,28 @@ RuleItem::RuleItem(const std::string &type, int listOrder) :
 
 	_confAimed.range = 200;
 	_confSnap.range = 15;
+	_confAkimbo.range = 15;
 	_confAuto.range = 7;
 
 	_confAimed.cost = { 0 };
 	_confSnap.cost = { 0, {} };
+	_confAkimbo.cost = { 0, {} };
 	_confAuto.cost = { 0, {} };
 	_confMelee.cost = { 0 };
 
 	_confAimed.flat = { {}, {} };
 	_confSnap.flat = { {}, {} };
+	_confAkimbo.flat = { {}, {} };
 	_confAuto.flat = { {}, {} };
 	_confMelee.flat = { {}, {} };
 
 	_confAimed.name = "STR_AIMED_SHOT";
 	_confSnap.name = "STR_SNAP_SHOT";
+	_confAkimbo.name = "STR_AKIMBO_SHOT";
 	_confAuto.name = "STR_AUTO_SHOT";
 
 	_confAuto.shots = 3;
+	_confAkimbo.shots = 1;
 
 	_customItemPreviewIndex.push_back(Mod::NO_SURFACE);
 }
@@ -487,6 +492,7 @@ void RuleItem::load(const YAML::YamlNodeReader& node, Mod *mod, const ModScript&
 	reader.tryRead("accuracyAimed", _confAimed.accuracy);
 	reader.tryRead("accuracyAuto", _confAuto.accuracy);
 	reader.tryRead("accuracySnap", _confSnap.accuracy);
+	reader.tryRead("accuracyAkimbo", _confAkimbo.accuracy);
 	reader.tryRead("accuracyMelee", _confMelee.accuracy);
 	reader.tryRead("accuracyUse", _accuracyUse);
 	reader.tryRead("accuracyMindControl", _accuracyMind);
@@ -506,6 +512,7 @@ void RuleItem::load(const YAML::YamlNodeReader& node, Mod *mod, const ModScript&
 	_confAimed.cost.loadCost(reader, "Aimed");
 	_confAuto.cost.loadCost(reader, "Auto");
 	_confSnap.cost.loadCost(reader, "Snap");
+	_confAkimbo.cost.loadCost(reader, "Akimbo");
 	_confMelee.cost.loadCost(reader, "Melee");
 	_costUse.loadCost(reader, "Use");
 	_costMind.loadCost(reader, "MindControl");
@@ -519,6 +526,7 @@ void RuleItem::load(const YAML::YamlNodeReader& node, Mod *mod, const ModScript&
 	_confAimed.flat.loadFlat(reader, "Aimed");
 	_confAuto.flat.loadFlat(reader, "Auto");
 	_confSnap.flat.loadFlat(reader, "Snap");
+	_confAkimbo.flat.loadFlat(reader, "Akimbo");
 	_confMelee.flat.loadFlat(reader, "Melee");
 	_flatUse.loadFlat(reader, "Use");
 	_flatThrow.loadFlat(reader, "Throw");
@@ -528,6 +536,7 @@ void RuleItem::load(const YAML::YamlNodeReader& node, Mod *mod, const ModScript&
 	loadConfAction(_confAimed, reader, "Aimed");
 	loadConfAction(_confAuto, reader, "Auto");
 	loadConfAction(_confSnap, reader, "Snap");
+	loadConfAction(_confAkimbo, reader, "Akimbo");
 	loadConfAction(_confMelee, reader, "Melee");
 
 	auto loadAmmoConf = [&](int offset, const YAML::YamlNodeReader& n)
@@ -607,11 +616,13 @@ void RuleItem::load(const YAML::YamlNodeReader& node, Mod *mod, const ModScript&
 	reader.tryRead("aimRange", _confAimed.range);
 	reader.tryRead("autoRange", _confAuto.range);
 	reader.tryRead("snapRange", _confSnap.range);
+	reader.tryRead("akimboRange", _confAkimbo.range);
 	reader.tryRead("minRange", _minRange);
 	reader.tryRead("dropoff", _dropoff);
 	reader.tryRead("bulletSpeed", _bulletSpeed);
 	reader.tryRead("explosionSpeed", _explosionSpeed);
 	reader.tryRead("autoShots", _confAuto.shots);
+	reader.tryRead("akimboShots", _confAkimbo.shots);
 	reader.tryRead("shotgunPellets", _shotgunPellets);
 	reader.tryRead("shotgunBehavior", _shotgunBehaviorType);
 	reader.tryRead("shotgunSpread", _shotgunSpread);
@@ -679,7 +690,7 @@ void RuleItem::afterLoad(const Mod* mod)
 {
 	if ((_battleType == BT_MELEE || _battleType == BT_FIREARM) && _clipSize == 0)
 	{
-		for (RuleItemAction* conf : { &_confAimed, &_confAuto, &_confSnap, &_confMelee, })
+		for (RuleItemAction* conf : { &_confAimed, &_confAuto, &_confSnap, &_confAkimbo, &_confMelee, })
 		{
 			if (conf->ammoSlot != RuleItem::AmmoSlotSelfUse && _compatibleAmmoNames[conf->ammoSlot].empty())
 			{
@@ -1353,6 +1364,13 @@ const RuleItemAction *RuleItem::getConfigSnap() const
 {
 	return &_confSnap;
 }
+/**
+ * Get configuration of akimboshot action.
+ */
+const RuleItemAction *RuleItem::getConfigAkimbo() const
+{
+	return &_confAkimbo;
+}
 
 /**
  * Get configuration of melee action.
@@ -1370,6 +1388,14 @@ const RuleItemAction *RuleItem::getConfigMelee() const
 int RuleItem::getAccuracySnap() const
 {
 	return _confSnap.accuracy;
+}
+/**
+ * Gets the item's accuracy for akimboshots.
+ * @return The akimboshot accuracy.
+ */
+int RuleItem::getAccuracyAkimbo() const
+{
+	return _confAkimbo.accuracy;
 }
 
 /**
@@ -1487,6 +1513,14 @@ RuleItemUseCost RuleItem::getCostAuto() const
 RuleItemUseCost RuleItem::getCostSnap() const
 {
 	return getDefault(_confSnap.cost, _confAimed.cost);
+}
+/**
+ * Gets the item's time unit percentage for akimboshots.
+ * @return The akimboshot TU percentage.
+ */
+RuleItemUseCost RuleItem::getCostAkimbo() const
+{
+	return getDefault(_confAkimbo.cost, _confAimed.cost);
 }
 
 /**
@@ -2188,6 +2222,14 @@ RuleItemUseFlat RuleItem::getFlatSnap() const
 {
 	return getDefault(_confSnap.flat, _confAimed.flat, _flatUse);
 }
+/**
+ * Returns whether this item charges a flat rate for costAkimbo.
+ * @return True if this item charges a flat rate for costAkimbo.
+ */
+RuleItemUseFlat RuleItem::getFlatAkimbo() const
+{
+	return getDefault(_confAkimbo.flat, _confAimed.flat, _flatUse);
+}
 
 /**
  * Returns whether this item charges a flat rate for costMelee.
@@ -2339,7 +2381,6 @@ int RuleItem::getAimRange() const
 {
 	return _confAimed.range;
 }
-
 /**
  * Gets the maximum effective range of this weapon for Snap Shot.
  * @return The maximum range.
@@ -2347,6 +2388,14 @@ int RuleItem::getAimRange() const
 int RuleItem::getSnapRange() const
 {
 	return _confSnap.range;
+}
+/**
+ * Gets the maximum effective range of this weapon for Akimbo Shot.
+ * @return The maximum range.
+ */
+int RuleItem::getAkimboRange() const
+{
+	return _confAkimbo.range;
 }
 
 /**
@@ -2391,6 +2440,9 @@ int RuleItem::calculateLimits(int& upperLimit, int& lowerLimit, int depth, Battl
 		{
 		case BA_SNAPSHOT:
 			upperLimit = getSnapRange();
+			break;
+		case BA_AKIMBOSHOT:
+			upperLimit = getAkimboRange();
 			break;
 		case BA_AUTOSHOT:
 			upperLimit = getAutoRange();
@@ -2963,6 +3015,7 @@ void RuleItem::ScriptRegister(ScriptParserBase* parser)
 	ri.add<&RuleItem::getAccuracyMind>("getAccuracyMind");
 	ri.add<&RuleItem::getAccuracyPanic>("getAccuracyPanic");
 	ri.add<&RuleItem::getAccuracySnap>("getAccuracySnap");
+	ri.add<&RuleItem::getAccuracyAkimbo>("getAccuracyAkimbo");
 	ri.add<&RuleItem::getAccuracyThrow>("getAccuracyThrow");
 	ri.add<&RuleItem::getAccuracyUse>("getAccuracyUse");
 

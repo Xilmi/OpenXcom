@@ -69,6 +69,7 @@ enum BattleActionType : Uint8
 	BA_SNAPSHOT = 8,
 	BA_AIMEDSHOT = 9,
 	BA_HIT = 10,
+	BA_AKIMBOSHOT = 21,
 
 	BA_USE = 11,
 	BA_LAUNCH = 12,
@@ -413,7 +414,7 @@ private:
 	std::unordered_map<const RuleItem*, int> _compatibleAmmoSlots;
 	RuleDamageType _damageType, _meleeType;
 	bool _damageTypeSet, _meleeTypeSet;
-	RuleItemAction _confAimed, _confAuto, _confSnap, _confMelee;
+	RuleItemAction _confAimed, _confAuto, _confSnap, _confAkimbo, _confMelee;
 	int _accuracyUse, _accuracyMind, _accuracyPanic, _accuracyThrow, _accuracyCloseQuarters;
 	int _noLOSAccuracyPenalty;
 	int _explodeInventory;
@@ -712,6 +713,8 @@ public:
 	const RuleItemAction *getConfigAuto() const;
 	/// Get configuration of snapshot action.
 	const RuleItemAction *getConfigSnap() const;
+	/// Get configuration of akimboshot action.
+	const RuleItemAction *getConfigAkimbo() const;
 	/// Get configuration of melee action.
 	const RuleItemAction *getConfigMelee() const;
 
@@ -722,6 +725,8 @@ public:
 	int getAccuracyAuto() const;
 	/// Gets the item's snapshot accuracy.
 	int getAccuracySnap() const;
+	/// Gets the item's akimboshot accuracy.
+	int getAccuracyAkimbo() const;
 	/// Gets the item's melee accuracy.
 	int getAccuracyMelee() const;
 	/// Gets the item's use accuracy.
@@ -745,6 +750,8 @@ public:
 	RuleItemUseCost getCostAuto() const;
 	/// Gets the item's snapshot cost.
 	RuleItemUseCost getCostSnap() const;
+	/// Gets the item's akimboshot cost.
+	RuleItemUseCost getCostAkimbo() const;
 	/// Gets the item's melee cost.
 	RuleItemUseCost getCostMelee() const;
 	/// Gets the item's use cost.
@@ -766,6 +773,8 @@ public:
 	RuleItemUseFlat getFlatAuto() const;
 	/// Should we charge a flat rate of costSnap?
 	RuleItemUseFlat getFlatSnap() const;
+	/// Should we charge a flat rate of costSnap?
+	RuleItemUseFlat getFlatAkimbo() const;
 	/// Should we charge a flat rate of costMelee?
 	RuleItemUseFlat getFlatMelee() const;
 	/// Should we charge a flat rate?
@@ -944,6 +953,8 @@ public:
 	int getAimRange() const;
 	/// Get the max range of snap shots with this weapon.
 	int getSnapRange() const;
+	/// Get the max range of akimbo shots with this weapon.
+	int getAkimboRange() const;
 	/// Get the max range of auto shots with this weapon.
 	int getAutoRange() const;
 	/// Get the minimum effective range of this weapon.

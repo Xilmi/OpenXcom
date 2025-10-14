@@ -164,6 +164,7 @@ public:
         int kneelDeviation[2]          = { -2, -2};
         int aimedDeviation[2]          = { 1, 1 };
         int snapDeviation[2]           = { 4, 4 };
+        int akimboDeviation[2]         = { 4, 4 };
         int autoDeviation[2]           = { 7, 7 };
 
         float horizontalSpreadCoeff[2] = { 1.2, 1.6 };

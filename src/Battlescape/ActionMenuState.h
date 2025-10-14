@@ -33,7 +33,9 @@ class ActionMenuState : public State
 {
 protected:
 	BattleAction *_action;
-	ActionMenuItem *_actionMenu[6];
+	ActionMenuItem *_actionMenu[7]; 	// Add additional point for Akimbo present. Originally was ActionMenuItem *_actionMenu[6];
+	const RuleItem* _opositeHandRule;  // adding stuff for Akimbo mod unit hands checking
+	const BattleItem* _opositeHand;
 	/// Adds a new menu item for an action.
 	void addItem(BattleActionType ba, const std::string &name, int *id, SDLKey key);
 	/// Acts on the action instance that has been chosen and set.

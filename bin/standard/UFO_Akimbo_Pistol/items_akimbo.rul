@@ -1,0 +1,8 @@
+  - type: STR_PISTOL
+    accuracyAkimbo: 55
+    tuAkimbo: 12
+    akimboShots: 2
+    flatAkimbo: false
+    akimboRange: 15
+    
+    

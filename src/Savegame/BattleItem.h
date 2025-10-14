@@ -62,6 +62,7 @@ private:
 	bool _XCOMProperty, _droppedOnAlienTurn, _isAmmo, _isWeaponWithAmmo, _fuseEnabled;
 	const RuleItemAction *_confAimedOrLaunch = nullptr;
 	const RuleItemAction *_confSnap = nullptr;
+	const RuleItemAction *_confAkimbo = nullptr;
 	const RuleItemAction *_confAuto = nullptr;
 	const RuleItemAction *_confMelee = nullptr;
 	ScriptValues<BattleItem> _scriptValues;

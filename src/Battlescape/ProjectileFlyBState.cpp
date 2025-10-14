@@ -136,6 +136,7 @@ void ProjectileFlyBState::init()
 	switch (_action.type)
 	{
 	case BA_SNAPSHOT:
+	case BA_AKIMBOSHOT:
 	case BA_AIMEDSHOT:
 	case BA_AUTOSHOT:
 	case BA_LAUNCH:

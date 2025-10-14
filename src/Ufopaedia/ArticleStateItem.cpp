@@ -264,6 +264,8 @@ namespace OpenXcom
 
 			addAttack(current_row, "STR_SHOT_TYPE_SNAP", item->getCostSnap(), item->getFlatSnap(), item->getConfigSnap(), item);
 
+			addAttack(current_row, "STR_SHOT_TYPE_AKIMBO", item->getCostAkimbo(), item->getFlatAkimbo(), item->getConfigAkimbo(), item);
+
 			addAttack(current_row, "STR_SHOT_TYPE_AIMED", item->getCostAimed(), item->getFlatAimed(), item->getConfigAimed(), item);
 
 			//optional melee

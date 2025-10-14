@@ -1941,6 +1941,7 @@ void StatsForNerdsState::initItemList()
 	addInteger(ss, itemRule->getAimRange(), "aimRange", aimRangeDefault);
 	addInteger(ss, itemRule->getAutoRange(), "autoRange", 7);
 	addInteger(ss, itemRule->getSnapRange(), "snapRange", 15);
+	addInteger(ss, itemRule->getAkimboRange(), "akimboRange", 15);
 	int dropoffDefault = itemBattleType == BT_PSIAMP ? 1 : 2;
 	addInteger(ss, itemRule->getDropoff(), "dropoff", dropoffDefault);
 
@@ -1948,9 +1949,11 @@ void StatsForNerdsState::initItemList()
 	addIntegerPercent(ss, itemRule->getConfigAimed()->accuracy, "accuracyAimed");
 	addIntegerPercent(ss, itemRule->getConfigAuto()->accuracy, "accuracyAuto");
 	addIntegerPercent(ss, itemRule->getConfigSnap()->accuracy, "accuracySnap");
+	addIntegerPercent(ss, itemRule->getConfigAkimbo()->accuracy, "accuracyAkimbo");
 	addRuleItemUseCostFull(ss, itemRule->getCostAimed(), "costAimed", RuleItemUseCost(), true, itemRule->getFlatAimed());
 	addRuleItemUseCostFull(ss, itemRule->getCostAuto(), "costAuto", RuleItemUseCost(), true, itemRule->getFlatAuto());
 	addRuleItemUseCostFull(ss, itemRule->getCostSnap(), "costSnap", RuleItemUseCost(), true, itemRule->getFlatSnap());
+	addRuleItemUseCostFull(ss, itemRule->getCostAkimbo(), "costAkimbo", RuleItemUseCost(), true, itemRule->getFlatAkimbo());
 
 	addRuleStatBonus(ss, *itemRule->getMeleeMultiplierRaw(), "meleeMultiplier");
 	addIntegerPercent(ss, itemRule->getConfigMelee()->accuracy, "accuracyMelee");
@@ -2161,6 +2164,21 @@ void StatsForNerdsState::initItemList()
 		addInteger(ss, itemRule->getConfigSnap()->ammoSpawnUnitChanceOverride, "ammoSpawnUnitChanceOverride", -1);
 		addInteger(ss, itemRule->getConfigSnap()->ammoSpawnItemChanceOverride, "ammoSpawnItemChanceOverride", -1);
 		addBoolean(ss, itemRule->getConfigSnap()->arcing, "arcing");
+		endHeading();
+	}
+
+	addHeading("confAkimbo");
+	{
+		addInteger(ss, itemRule->getConfigAkimbo()->shots, "shots", 1);
+		addInteger(ss, itemRule->getConfigAkimbo()->spendPerShot, "spendPerShot", 1);
+		addBoolean(ss, itemRule->getConfigAkimbo()->followProjectiles, "followProjectiles", true);
+		addSingleString(ss, itemRule->getConfigAkimbo()->name, "name", "STR_AKIMBO_SHOT");
+		addSingleString(ss, itemRule->getConfigAkimbo()->shortName, "shortName");
+		addInteger(ss, itemRule->getConfigAkimbo()->ammoSlot, "ammoSlot");
+		addInteger(ss, itemRule->getConfigAkimbo()->ammoZombieUnitChanceOverride, "ammoZombieUnitChanceOverride", -1);
+		addInteger(ss, itemRule->getConfigAkimbo()->ammoSpawnUnitChanceOverride, "ammoSpawnUnitChanceOverride", -1);
+		addInteger(ss, itemRule->getConfigAkimbo()->ammoSpawnItemChanceOverride, "ammoSpawnItemChanceOverride", -1);
+		addBoolean(ss, itemRule->getConfigAkimbo()->arcing, "arcing");
 		endHeading();
 	}
 
@@ -2456,6 +2474,7 @@ void StatsForNerdsState::initItemList()
 		addRuleItemUseCostBasic(ss, itemRule->getCostAimed(), "tuAimed");
 		addRuleItemUseCostBasic(ss, itemRule->getCostAuto(), "tuAuto");
 		addRuleItemUseCostBasic(ss, itemRule->getCostSnap(), "tuSnap");
+		addRuleItemUseCostBasic(ss, itemRule->getCostAkimbo(), "tuAkimbo");
 		addRuleItemUseCostBasic(ss, itemRule->getCostMelee(), "tuMelee");
 		tuUseDefault = (itemBattleType == BT_PSIAMP/* && itemRule->getPsiAttackName().empty()*/) ? 0 : 25;
 		addRuleItemUseCostBasic(ss, itemRule->getCostUse(), "tuUse", tuUseDefault);
@@ -2474,6 +2493,7 @@ void StatsForNerdsState::initItemList()
 		addRuleItemUseCostFull(ss, itemRule->getFlatAimed(), "flatAimed", RuleItemUseFlat(0, 1));
 		addRuleItemUseCostFull(ss, itemRule->getFlatAuto(), "flatAuto", RuleItemUseFlat(0, 1));
 		addRuleItemUseCostFull(ss, itemRule->getFlatSnap(), "flatSnap", RuleItemUseFlat(0, 1));
+		addRuleItemUseCostFull(ss, itemRule->getFlatAkimbo(), "flatAkimbo", RuleItemUseFlat(0, 1));
 		addRuleItemUseCostFull(ss, itemRule->getFlatMelee(), "flatMelee", RuleItemUseFlat(0, 1));
 		addRuleItemUseCostFull(ss, itemRule->getFlatUse(), "flatUse", RuleItemUseFlat(0, 1));
 		addRuleItemUseCostFull(ss, itemRule->getFlatThrow(), "flatThrow", RuleItemUseFlat(0, 1));

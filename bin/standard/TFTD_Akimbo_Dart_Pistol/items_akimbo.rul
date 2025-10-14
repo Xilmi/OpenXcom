@@ -1,0 +1,8 @@
+  - type: STR_DART_PISTOL
+    accuracyAkimbo: 35
+    tuAkimbo: 15
+    akimboShots: 2
+    flatAkimbo: false
+    akimboRange: 15
+    
+    
