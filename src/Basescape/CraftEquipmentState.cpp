@@ -201,6 +201,7 @@ CraftEquipmentState::CraftEquipmentState(Base *base, size_t craft) :
 		_categoryStrings.push_back("STR_UNASSIGNED");
 	}
 	_categoryStrings.push_back("STR_NOT_EQUIPPED");
+	_categoryStrings.push_back("STR_NOT_PURCHASABLE");
 
 	_cbxFilterBy->setOptions(_categoryStrings, true);
 	_cbxFilterBy->setSelected(0);
@@ -346,6 +347,7 @@ void CraftEquipmentState::initList()
 	bool categoryUnassigned = (selectedCategory == "STR_UNASSIGNED");
 	bool categoryEquipped = (selectedCategory == "STR_EQUIPPED");
 	bool categoryNotEquipped = (selectedCategory == "STR_NOT_EQUIPPED");
+	bool categoryNotPurchasable = (selectedCategory == "STR_NOT_PURCHASABLE");
 	bool shareAmmoCategories = _game->getMod()->getShareAmmoCategories();
 
 	Craft *c = _base->getCrafts()->at(_craft);
@@ -409,6 +411,13 @@ void CraftEquipmentState::initList()
 				else if (categoryNotEquipped)
 				{
 					if (cQty > 0)
+					{
+						continue;
+					}
+				}
+				else if (categoryNotPurchasable)
+				{
+					if (rule->getBuyCost() != 0)
 					{
 						continue;
 					}

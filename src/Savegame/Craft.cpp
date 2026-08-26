@@ -2288,6 +2288,8 @@ CraftPlacementErrors Craft::validateAddingSoldier(int availableSpace, const Sold
 	{
 		for (auto& limit : limitArmorGroups)
 		{
+			if (s->getArmor()->getGroup() != limit.first) continue;
+
 			int subTotal = 0;
 			for (const auto* tmpSoldier : *_base->getSoldiers())
 			{

@@ -17,6 +17,7 @@
  * along with OpenXcom.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "Screen.h"
+#include "../resource.h"
 #include <algorithm>
 #include <sstream>
 #include <cmath>
@@ -34,7 +35,6 @@
 #include "Zoom.h"
 #include "Timer.h"
 #include <SDL.h>
-#include <algorithm>
 
 namespace OpenXcom
 {
@@ -368,6 +368,7 @@ void Screen::resetDisplay(bool resetVideo, bool noShaders)
 			// recreate operations done by `Game::Game` constructor
 			SDL_ShowCursor(SDL_ENABLE);
 			SDL_EnableUNICODE(1);
+			CrossPlatform::setWindowIcon(IDI_ICON1, "openxcom.png");
 			SDL_WM_SetCaption(title.c_str(), 0);
 			SDL_WM_GrabInput(Options::captureMouse);
 			SDL_SetCursor(SDL_CreateCursor(&cursor, &cursor, 1,1,0,0));
