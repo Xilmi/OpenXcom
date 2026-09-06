@@ -144,7 +144,6 @@ void Unit::load(const YAML::YamlNodeReader& node, Mod* mod)
     {
         throw Exception("Error with unit " + _type + ": Unit height may not exceed 25");
     }
-    reader.tryRead("value", _value);
     reader.tryRead("moraleLossWhenKilled", _moraleLossWhenKilled);
     reader.tryRead("intelligence", _intelligence);
     reader.tryRead("aggression", _aggression);
