@@ -136,6 +136,10 @@ OptionsAdvancedState::OptionsAdvancedState(OptionsOrigin origin) : OptionsBaseSt
 			{
 				_settingsBattle[optionInfo.owner()].push_back(optionInfo);
 			}
+			else if (optionInfo.category() == "STR_BATTLERA")
+			{
+				_settingsBattleRA[optionInfo.owner()].push_back(optionInfo);
+			}
 			else if (optionInfo.category() == "STR_AI")
 			{
 				_settingsAI[optionInfo.owner()].push_back(optionInfo);
@@ -232,6 +236,21 @@ void OptionsAdvancedState::updateList()
 		addSettings(_settingsBattle[idx]);
 		row += _settingsBattle[idx].size();
 		_offsetBattleMax = row;
+	}
+	if (_settingsBattleRA[idx].size() > 0)
+	{
+		if (row > -1)
+		{
+			_lstOptions->addRow(2, "", "");
+			row++;
+		}
+		_lstOptions->addRow(2, tr("STR_BATTLERA").c_str(), "");
+		row++;
+		_offsetBattleRAMin = row;
+		_lstOptions->setCellColor(_offsetBattleRAMin, 0, _colorGroup);
+		addSettings(_settingsBattleRA[idx]);
+		row += _settingsBattleRA[idx].size();
+		_offsetBattleRAMax = row;
 	}
 	if (_settingsAI[idx].size() > 0)
 	{

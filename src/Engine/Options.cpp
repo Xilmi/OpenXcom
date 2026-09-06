@@ -589,13 +589,6 @@ void createAdvancedOptionsOTHER()
 	_info.push_back(OptionInfo(OPTION_OTHER, "forcedAbsoluteCosts", &forcedAbsoluteCosts, false, "STR_FORCED_ABSOLUTE_COSTS", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo(OPTION_OTHER, "shootingSpreadMode", &shootingSpreadMode, 1, "STR_SHOOTING_SPREAD_MODE", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo(OPTION_OTHER, "useChanceToHit", &useChanceToHit, true, "STR_BATTLECHANCETOHIT", "STR_BATTLESCAPE"));
-	_info.push_back(OptionInfo(OPTION_OTHER, "battleRealisticAccuracy", &battleRealisticAccuracy, false, "STR_BATTLEREALISTICACCURACY", "STR_BATTLESCAPE"));
-	_info.push_back(OptionInfo(OPTION_OTHER, "battleRealisticImprovedAimed", &battleRealisticImprovedAimed, true, "STR_BATTLEREALISTICIMPAIMED", "STR_BATTLESCAPE"));
-	_info.push_back(OptionInfo(OPTION_OTHER, "battleRealisticImprovedLof", &battleRealisticImprovedLof, false, "STR_BATTLEREALISTICIMPLOF", "STR_BATTLESCAPE"));
-	_info.push_back(OptionInfo(OPTION_OTHER, "battleRealisticShotDispersion", &battleRealisticShotDispersion, 1, "STR_BATTLEREALISTICSHOTDISPERSION", "STR_BATTLESCAPE"));
-	_info.push_back(OptionInfo(OPTION_OTHER, "battleRealisticCoverEfficiency", &battleRealisticCoverEfficiency, 3, "STR_BATTLEREALISTICCOVEREFFICIENCY", "STR_BATTLESCAPE"));
-	_info.push_back(OptionInfo(OPTION_OTHER, "battleRealisticDisplayRolls", &battleRealisticDisplayRolls, false, "STR_BATTLEREALISTICDISPLAYROLLS", "STR_BATTLESCAPE"));
-	_info.push_back(OptionInfo(OPTION_OTHER, "battleRealisticDisplayOthersRolls", &battleRealisticDisplayOthersRolls, false, "STR_BATTLEREALISTICDISPLAYOTHERSROLLS", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo(OPTION_OTHER, "battleAltGrenades", &battleAltGrenades, false, "STR_BATTLEALTGRENADES", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo(OPTION_OTHER, "battleThrownSpeed", &battleThrownSpeed, 0, "STR_BATTLETHROWNSPEED", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo(OPTION_OTHER, "instantPrime", &instantPrime, false, "STR_INSTANTPRIME", "STR_BATTLESCAPE"));
@@ -606,6 +599,15 @@ void createAdvancedOptionsOTHER()
 	_info.push_back(OptionInfo(OPTION_OTHER, "oxceSmartCtrlEquip", &oxceSmartCtrlEquip, true, "STR_SMARTCONTROLEQUIP", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo(OPTION_OTHER, "preprimeGrenades", &preprimeGrenades, 1, "STR_PREPRIMEGRENADES", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo(OPTION_OTHER, "updateTurnsSinceSeenByClue", &updateTurnsSinceSeenByClue, true, "STR_UPDATETURNSSINCESEENBYCLUE", "STR_BATTLESCAPE"));
+
+	// OTHER options Realistic Accuracy
+	_info.push_back(OptionInfo(OPTION_OTHER, "battleRealisticAccuracy", &battleRealisticAccuracy, false, "STR_BATTLEREALISTICACCURACY", "STR_BATTLERA"));
+	_info.push_back(OptionInfo(OPTION_OTHER, "battleRealisticImprovedAimed", &battleRealisticImprovedAimed, true, "STR_BATTLEREALISTICIMPAIMED", "STR_BATTLERA"));
+	_info.push_back(OptionInfo(OPTION_OTHER, "battleRealisticImprovedLof", &battleRealisticImprovedLof, false, "STR_BATTLEREALISTICIMPLOF", "STR_BATTLERA"));
+	_info.push_back(OptionInfo(OPTION_OTHER, "battleRealisticShotDispersion", &battleRealisticShotDispersion, 1, "STR_BATTLEREALISTICSHOTDISPERSION", "STR_BATTLERA"));
+	_info.push_back(OptionInfo(OPTION_OTHER, "battleRealisticCoverEfficiency", &battleRealisticCoverEfficiency, 3, "STR_BATTLEREALISTICCOVEREFFICIENCY", "STR_BATTLERA"));
+	_info.push_back(OptionInfo(OPTION_OTHER, "battleRealisticDisplayRolls", &battleRealisticDisplayRolls, false, "STR_BATTLEREALISTICDISPLAYROLLS", "STR_BATTLERA"));
+	_info.push_back(OptionInfo(OPTION_OTHER, "battleRealisticDisplayOthersRolls", &battleRealisticDisplayOthersRolls, false, "STR_BATTLEREALISTICDISPLAYOTHERSROLLS", "STR_BATTLERA"));
 
 	// OTHER options AI
 	_info.push_back(OptionInfo(OPTION_OTHER, "brutalAI", &brutalAI, 1, "STR_BRUTALAI", "STR_AI"));
