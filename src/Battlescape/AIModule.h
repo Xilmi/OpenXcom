@@ -54,6 +54,7 @@ private:
 	BattleUnit *_aggroTarget;
 	int _knownEnemies, _visibleEnemies, _spottingEnemies;
 	int _escapeTUs, _ambushTUs;
+	int _walkAbortCounter;
 	bool _weaponPickedUp;
 	bool _wantToEndTurn;
 	bool _rifle, _melee, _blaster, _grenade;
@@ -98,6 +99,8 @@ public:
 	void think(BattleAction *action);
 	/// Sets the "unit was hit" flag true.
 	void setWasHitBy(BattleUnit *attacker);
+	/// Increases the walk abort counter.
+	void increaseWalkAbortCounter() { _walkAbortCounter++; }
 	/// Sets the "unit picked up a weapon" flag.
 	void setWeaponPickedUp();
 	/// Gets whether the unit was hit.

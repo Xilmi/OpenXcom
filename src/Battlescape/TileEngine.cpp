@@ -5318,9 +5318,10 @@ int TileEngine::meleeAttackCalculate(BattleActionAttack::ReadOnly attack, const 
 	int arc = getArcDirection(getDirectionTo(victim->getPositionVexels(), attack.attacker->getPositionVexels()), victim->getDirection());
 	int defenseStrengthPenalty = Clamp((int)(defenseStrength * (arc * victim->getArmor()->getMeleeDodgeBackPenalty() / 4.0f)), 0, std::max(0, defenseStrength));
 
-	auto type = attack.type;
-	auto attacker = attack.attacker;
-	auto weapon = attack.weapon_item;
+	BattleActionType type = attack.type;
+	auto* attacker = attack.attacker;
+	auto* weapon = attack.weapon_item;
+	int isSameFaction = (attacker->getFaction() == victim->getFaction()) ? 1 : 0;
 
 	auto rng = RNG::globalRandomState().subSequence();
 
@@ -5329,7 +5330,7 @@ int TileEngine::meleeAttackCalculate(BattleActionAttack::ReadOnly attack, const 
 	meleeAttackResult = ModScript::scriptFunc1<ModScript::TryMeleeAttackItem>(
 		weapon->getRules(),
 		meleeAttackResult,
-		weapon, attacker, victim, attack.skill_rules, attackStrength, defenseStrength, type, &rng, arc, defenseStrengthPenalty,
+		weapon, attacker, victim, isSameFaction, attack.skill_rules, attackStrength, defenseStrength, type, &rng, arc, defenseStrengthPenalty,
 		_save
 	);
 

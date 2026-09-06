@@ -22,6 +22,7 @@
 #include "LoadYaml.h"
 #include "Mod.h"
 #include "Armor.h"
+#include "RuleVoiceSet.h"
 
 namespace OpenXcom
 {
@@ -31,7 +32,8 @@ namespace OpenXcom
  * @param type String defining the type.
  */
 Unit::Unit(const std::string &type) :
-	_type(type), _liveAlienName(Mod::STR_NULL), _showFullNameInAlienInventory(-1), _armor(nullptr), _standHeight(0), _kneelHeight(0), _floatHeight(0), _value(0),
+	_type(type), _liveAlienName(Mod::STR_NULL), _showFullNameInAlienInventory(-1), _armor(nullptr), _standHeight(0), _kneelHeight(0), _floatHeight(0),
+	_valueKilled(0), _valueCaptured(-999), _valueCapturedResearched(10), _valueCivilian(-999), _valueCivilianKilledByXcom(-999), _valueVIP(-999),
 	_moraleLossWhenKilled(100), _moveSound(-1), _intelligence(0), _aggression(0),
 	_spotter(0), _sniper(0), _energyRecovery(30), _specab(SPECAB_NONE), _livingWeapon(false), _aiTargetMode(0),
 	_psiWeapon("ALIEN_PSI_WEAPON"), _capturable(true), _canSurrender(false), _autoSurrender(false),
@@ -72,6 +74,57 @@ void Unit::load(const YAML::YamlNodeReader& node, Mod* mod)
     mod->loadNameNull(_type, _civilianRecoveryTypeName, reader["civilianRecoveryType"]);
     mod->loadNameNull(_type, _spawnedPersonName, reader["spawnedPersonName"]);
     mod->loadNameNull(_type, _liveAlienName, reader["liveAlien"]);
+	reader.tryRead("rank", _rank);
+	_stats.merge(reader["stats"].readVal(_stats));
+	mod->loadName(_type, _armorName, reader["armor"]);
+	reader.tryRead("standHeight", _standHeight);
+	reader.tryRead("kneelHeight", _kneelHeight);
+	reader.tryRead("floatHeight", _floatHeight);
+	if (_floatHeight + _standHeight > 25)
+	{
+		throw Exception("Error with unit "+ _type +": Unit height may not exceed 25");
+	}
+	reader.tryRead("value", _valueKilled);
+	reader.tryRead("valueCaptured", _valueCaptured);
+	reader.tryRead("valueCapturedResearched", _valueCapturedResearched);
+	reader.tryRead("valueCivilian", _valueCivilian);
+	reader.tryRead("valueCivilianKilledByXcom", _valueCivilianKilledByXcom);
+	reader.tryRead("valueVIP", _valueVIP);
+	reader.tryRead("moraleLossWhenKilled", _moraleLossWhenKilled);
+	reader.tryRead("intelligence", _intelligence);
+	reader.tryRead("aggression", _aggression);
+	reader.tryRead("spotter", _spotter);
+	reader.tryRead("sniper", _sniper);
+	reader.tryRead("energyRecovery", _energyRecovery);
+	reader.tryRead("specab", _specab);
+	reader.tryRead("spawnUnit", _spawnUnitName);
+	reader.tryRead("livingWeapon", _livingWeapon);
+	reader.tryRead("canSurrender", _canSurrender);
+	reader.tryRead("autoSurrender", _autoSurrender);
+	reader.tryRead("isLeeroyJenkins", _isLeeroyJenkins);
+	reader.tryRead("waitIfOutsideWeaponRange", _waitIfOutsideWeaponRange);
+	reader.tryRead("pickUpWeaponsMoreActively", _pickUpWeaponsMoreActively);
+	loadBoolNullable(_avoidsFire, reader["avoidsFire"]);
+	reader.tryRead("meleeWeapon", _meleeWeapon);
+	reader.tryRead("psiWeapon", _psiWeapon);
+	reader.tryRead("capturable", _capturable);
+	reader.tryRead("vip", _vip);
+	reader.tryRead("cosmetic", _cosmetic);
+	reader.tryRead("ignoredByAI", _ignoredByAI);
+	reader.tryRead("canPanic", _canPanic);
+	reader.tryRead("canBeMindControlled", _canBeMindControlled);
+	reader.tryRead("berserkChance", _berserkChance);
+	reader.tryRead("builtInWeaponSets", _builtInWeaponsNames);
+	if (reader["builtInWeapons"])
+	{
+		_builtInWeaponsNames.push_back(reader["builtInWeapons"].readVal<std::vector<std::string> >());
+	}
+	for (const auto& weights : reader["weightedBuiltInWeaponSets"].children())
+	{
+		WeightedOptions* nw = new WeightedOptions();
+		nw->load(weights);
+		_weightedBuiltInWeapons.push_back(nw);
+	}
 
     if (reader["spawnedSoldier"])
     {
@@ -148,6 +201,7 @@ void Unit::load(const YAML::YamlNodeReader& node, Mod* mod)
     mod->loadSoundOffset(_type, _annoyedSound, reader["annoyedSound"], "BATTLE.CAT");
 
     mod->loadSoundOffset(_type, _moveSound, reader["moveSound"], "BATTLE.CAT");
+	mod->loadNames(_type, _voiceSetNames, reader["voiceSets"]);
 }
 
 /**
@@ -155,6 +209,16 @@ void Unit::load(const YAML::YamlNodeReader& node, Mod* mod)
  */
 void Unit::afterLoad(const Mod* mod)
 {
+	if (_valueCaptured == -999)
+		_valueCaptured = _valueKilled * 2;
+	// _valueCapturedResearched was already defaulted (10) in the constructor
+	if (_valueCivilian == -999)
+		_valueCivilian = _valueKilled;
+	if (_valueCivilianKilledByXcom == -999)
+		_valueCivilianKilledByXcom = (_valueCivilian * 5) / 3; // e.g. killed by aliens = 30, killed by xcom = 50
+	if (_valueVIP == -999)
+		_valueVIP = _valueKilled;
+
 	mod->linkRule(_armor, _armorName);
 	mod->linkRule(_spawnUnit, _spawnUnitName);
 	mod->linkRule(_builtInWeapons, _builtInWeaponsNames);
@@ -166,6 +230,8 @@ void Unit::afterLoad(const Mod* mod)
 	{
 		mod->linkRule(_liveAlien, _liveAlienName);
 	}
+
+	mod->linkRule(_voiceSets, _voiceSetNames);
 
 	if (Mod::isEmptyRuleName(_civilianRecoveryTypeName) == false)
 	{
@@ -290,15 +356,6 @@ std::string Unit::getRank() const
 }
 
 /**
- * Gets the unit's value - for scoring.
- * @return The unit's value.
- */
-int Unit::getValue() const
-{
-	return _value;
-}
-
-/**
 * Get the unit's death sounds.
 * @return List of sound IDs.
 */
@@ -323,6 +380,19 @@ const std::vector<int> &Unit::getPanicSounds() const
 const std::vector<int> &Unit::getBerserkSounds() const
 {
 	return _berserkSound;
+}
+
+/**
+ * Gets a random voice set.
+ * @return A random voice set.
+ */
+const RuleVoiceSet* Unit::getRandomVoiceSet() const
+{
+	if (!_voiceSets.empty())
+	{
+		return _voiceSets[RNG::seedless(0, _voiceSets.size() - 1)];
+	}
+	return nullptr;
 }
 
 /**
