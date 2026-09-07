@@ -155,6 +155,10 @@ void ExplosionBState::init()
 				_power = 0;
 				miss = true;
 			}
+			if (_terrainMeleeTilePart == 4)
+			{ // Terrain melee floor aiming helper trick: Do not allow to miss terrain and make TileEngine::hit() function recheck impact position
+				_terrainMeleeTilePart = 0;
+			}
 		}
 		else if (type == BT_FIREARM)
 		{
