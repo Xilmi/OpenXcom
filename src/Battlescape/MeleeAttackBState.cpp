@@ -234,6 +234,15 @@ void MeleeAttackBState::performMeleeAttack(int terrainMeleeTilePart)
 
 	Position damagePosition = _voxel + difference;
 
+	if (terrainMeleeTilePart == 4)
+	{
+		// pWWWa: handling of miss during of hitting some floor terrain
+		while (damagePosition.z > _action.target.toVoxel().z && _parent->getTileEngine()->voxelCheck(damagePosition, _unit) == V_EMPTY)
+		{
+			--damagePosition.z;
+		}
+	}
+
 
 	// make an explosion action
 	_parent->statePushFront(new ExplosionBState(_parent, damagePosition, BattleActionAttack::GetAferShoot(_action, _ammo), 0, true, 0, 0, terrainMeleeTilePart));
