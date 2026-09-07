@@ -337,6 +337,10 @@ OptionInfo *OptionsAdvancedState::getSetting(size_t sel)
 	{
 		return &_settingsBattle[idx][selInt - 1 - _offsetBattleMin];
 	}
+	else if (selInt > _offsetBattleRAMin && selInt <= _offsetBattleRAMax)
+	{
+		return &_settingsBattleRA[idx][selInt - 1 - _offsetBattleRAMin];
+	}
 	else if (selInt > _offsetAIMin && selInt <= _offsetAIMax)
 	{
 		return &_settingsAI[idx][selInt - 1 - _offsetAIMin];
