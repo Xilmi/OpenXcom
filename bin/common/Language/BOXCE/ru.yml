@@ -113,4 +113,7 @@ ru:
   spaceOccupied: "Место занято"
  # Diagonal Terrain melee
   STR_DIAG_TERRAIN_MELEE: "Рукопашно местность по диагонали "
-  STR_DIAG_TERRAIN_MELEE_DESC: "Атака объектов ландшафта по диагонали в ближнем бою.{NEWLINE}Требует включения опции \"terrainMeleeExtended\".{NEWLINE}{ALT}Alt+клик{ALT} - бить объекты на текущей и соседних клетках."
+  STR_DIAG_TERRAIN_MELEE_DESC: "Атака объектов ландшафта по диагонали в ближнем бою.{NEWLINE}Требует включения опции {ALT}terrainMeleeExtended{ALT}.{NEWLINE}{ALT}Alt+клик{ALT} - бить объекты на текущей и соседних клетках."
+  # Floating unit Bobbing
+  STR_FLOAT_UNIT_BOBBING: "Покачивание парящих отрядов"  
+  STR_FLOAT_UNIT_BOBBING_DESC: "Каждый отряд будет cлегка покачиваться в летающем/парящем состоянии."

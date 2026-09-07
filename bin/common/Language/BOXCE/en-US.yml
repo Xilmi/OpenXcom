@@ -116,4 +116,7 @@ en-US:
   spaceOccupied: "Space Occupied"
   # Diagonal Terrain melee
   STR_DIAG_TERRAIN_MELEE: "Diagonal Terrain Melee"
-  STR_DIAG_TERRAIN_MELEE_DESC: "Hitting terrain objects at diagonal directions with melee.{NEWLINE}Requires activated \"TerrainMeleeExtended\" feature.{NEWLINE}{ALT}Alt+click{ALT} - to hit objects at current and adjacent tiles."
+  STR_DIAG_TERRAIN_MELEE_DESC: "Hitting terrain objects at diagonal directions with melee.{NEWLINE}Requires activated {ALT}terrainMeleeExtended{ALT} feature.{NEWLINE}{ALT}Alt+click{ALT} - to hit objects at current and adjacent tiles."
+  # Floating unit Bobbing
+  STR_FLOAT_UNIT_BOBBING: "Bobbing of floating unit"  
+  STR_FLOAT_UNIT_BOBBING_DESC: "Each unit will bob slightly when in flying/floating state."
