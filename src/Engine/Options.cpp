@@ -585,6 +585,7 @@ void createAdvancedOptionsOTHER()
 	_info.push_back(OptionInfo(OPTION_OTHER, "baseDetectionProbability", &baseDetectionProbability, false, "STR_DISPLAY_BASE_DETECTION_PROBABILITY", "STR_BASESCAPE"));
 
 	// OTHER options Battlescape
+	_info.push_back(OptionInfo(OPTION_OTHER, "floatUnitBobbing", &floatUnitBobbing, false, "STR_FLOAT_UNIT_BOBBING", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo(OPTION_OTHER, "diagTerrainMelee", &diagTerrainMelee, false, "STR_DIAG_TERRAIN_MELEE", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo(OPTION_OTHER, "forcedAbsoluteCosts", &forcedAbsoluteCosts, false, "STR_FORCED_ABSOLUTE_COSTS", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo(OPTION_OTHER, "shootingSpreadMode", &shootingSpreadMode, 1, "STR_SHOOTING_SPREAD_MODE", "STR_BATTLESCAPE"));

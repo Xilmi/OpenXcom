@@ -123,6 +123,7 @@ Map::Map(Game *game, int width, int height, int x, int y, int visibleMapHeight) 
 		}
 	}
 
+	_oxceFOWColor = Options::oxceFOWColor == 1 && _isTFTD ? 13 : Options::oxceFOWColor; // pWWWa: 1 is default and unified, which defines "silver gray" color for UFO and TFTD 
 	_iconHeight = _game->getMod()->getInterface("battlescape")->getElement("icons")->h;
 	_iconWidth = _game->getMod()->getInterface("battlescape")->getElement("icons")->w;
 	_messageColor = _game->getMod()->getInterface("battlescape")->getElement("messageWindows")->color;
@@ -734,6 +735,10 @@ void Map::drawUnit(UnitSprite &unitSprite, Tile *unitTile, Tile *currTile, Posit
 	{
 		shade = std::min(+NIGHT_VISION_SHADE, shade);
 	}
+	if (Options::floatUnitBobbing && bu->isFloating())
+	{
+		offsets.ScreenOffset.y += getArrowBobForFrame( _animFrame * (bu->getId() % 2 ? 0.5 : 0.45) );
+	}
 	unitSprite.draw(bu, part, tileScreenPosition.x + offsets.ScreenOffset.x, tileScreenPosition.y + offsets.ScreenOffset.y, shade, mask, _isAltPressed && !_isCtrlPressed);
 }
 
@@ -962,7 +967,7 @@ void Map::drawTerrain(Surface *surface)
 						else if (tile->isDiscovered(O_FLOOR))
 						{
 							tileShade = reShade(tile) + oxceFOWshade; // make non visible tiles darker
-							_nvColor = Options::oxceFOWColor;        // set FOW color
+							_nvColor = _oxceFOWColor;                 // set FOW color.
 							if (tileShade > 15)
 								tileShade = 15;
 							obstacleShade = tileShade;
