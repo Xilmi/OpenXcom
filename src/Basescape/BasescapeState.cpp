@@ -244,7 +244,7 @@ void BasescapeState::init()
 	_txtFunds->setText(tr("STR_FUNDS").arg(Unicode::formatFunding(_game->getSavedGame()->getFunds())));
 	_btnNewBase->setVisible(_game->getSavedGame()->getBases()->size() < Options::maxNumberOfBases);
 
-	if (!_game->getMod()->getNewBaseUnlockResearch().empty())
+	if (_game->getMod()->getNewBaseUnlockResearch())
 	{
 		bool newBasesUnlocked = _game->getSavedGame()->isResearched(_game->getMod()->getNewBaseUnlockResearch(), true);
 		if (!newBasesUnlocked)
