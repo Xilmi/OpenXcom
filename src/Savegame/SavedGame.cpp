@@ -3133,10 +3133,9 @@ void SavedGame::setDisableSoldierEquipment(bool disableSoldierEquipment)
 /**
  * Is the mana feature already unlocked?
  */
-bool SavedGame::isManaUnlocked(Mod *mod) const
+bool SavedGame::isManaUnlocked(Mod* mod) const
 {
-	auto research = mod->getManaUnlockResearch();
-	if (Mod::isEmptyRuleName(research->getName()) || isResearched(research))
+	if (!mod->getManaUnlockResearch() || isResearched(mod->getManaUnlockResearch()))
 	{
 		return true;
 	}
