@@ -1834,7 +1834,7 @@ std::tuple<int, int, int, int, int> getTrajectoryDataHelper(TileEngine* te, cons
 		visibleDistanceVoxels += step;
 		if (t->getFire() == 0)
 		{
-			densityOfSmoke += step * t->getSmoke();
+			densityOfSmoke += step * 20;
 		}
 		else
 		{
