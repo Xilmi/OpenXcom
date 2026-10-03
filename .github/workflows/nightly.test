@@ -31,10 +31,11 @@ jobs:
           echo "FILENAME=oxce_git_${{ env.DATEFILE }}" >> $GITHUB_ENV
 
       - name: Install XP Toolset
+        if: false
         shell: powershell
         run: |
           Set-Location "C:\Program Files (x86)\Microsoft Visual Studio\Installer\"
-          $InstallPath = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
+          $InstallPath = .\vswhere.exe -property installationPath
           $WorkLoads = '--add Microsoft.VisualStudio.Component.WinXP'
           $Arguments = ('/c', "vs_installer.exe", 'modify', '--installPath', "`"$InstallPath`"", $WorkLoads, '--quiet', '--norestart', '--nocache')
           $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
@@ -49,18 +50,16 @@ jobs:
 
       - name: Compile source (x86 only)
         env:
-          VC_FLAGS: /v:minimal /m /p:BuildInParallel=true /p:PreferredToolArchitecture=x64 /p:Configuration=Release_XP
+          VC_FLAGS: /v:minimal /m /p:BuildInParallel=true /p:PreferredToolArchitecture=x64 /p:Configuration=Release
         run: |
           cd src
           msbuild OpenXcom.2010.sln ${{ env.VC_FLAGS }} /p:Platform=Win32
-          cd ..
-          Rename-Item -Path "bin\Win32\Release_XP" -NewName "Release"
 
       - name: Create nightly ZIP (x86 only)
         shell: powershell
         run: |
           New-Item -ItemType "directory" -Path "artifacts"
-          Compress-Archive -Path "bin\Win32\Release\OpenXcom.exe", "bin\Win32\*.dll", "bin\common", "bin\standard", "bin\TFTD", "bin\UFO", "LICENSE.txt" -DestinationPath "artifacts\${{ env.FILENAME }}_win32_xp.zip"
+          Compress-Archive -Path "bin\Win32\Release\OpenXcom.exe", "bin\Win32\*.dll", "bin\common", "bin\standard", "bin\TFTD", "bin\UFO", "LICENSE.txt" -DestinationPath "artifacts\${{ env.FILENAME }}_win32.zip"
 
       - name: Get SHA hashes
         uses: nrwl/nx-set-shas@v4
