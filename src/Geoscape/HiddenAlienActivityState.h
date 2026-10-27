@@ -37,19 +37,15 @@ class HiddenAlienActivityState : public State
 private:
 
 	GeoscapeState* _state;
-
-	std::map<OpenXcom::Region*, int> _displayHiddenAlienActivityRegions;
-	std::map<OpenXcom::Country*, int> _displayHiddenAlienActivityCountries;
-
 	TextButton* _btnOk;
 	TextButton* _btnCancel;
 	Window *_window;
-	Text *_txtInfo, *_txtHeaderRegions, *_txtSightingsRegions, *_txtHeaderCountries, *_txtSightingsCountries, *_txtRegionHeader, *_txtCountryHeader;
+	Text *_txtInfo, *_txtHeaderRegions, *_txtSightingsRegions, *_txtHeaderCountries, *_txtSightingsCountries;
 	TextList *_lstHiddenAlienActivityRegions, *_lstHiddenAlienActivityCountries;
 
 public:
 
-	HiddenAlienActivityState(GeoscapeState* state, std::map<OpenXcom::Region*, int> displayHiddenAlienActivityRegions, std::map<OpenXcom::Country*, int> displayHiddenAlienActivityCountries);
+	HiddenAlienActivityState(GeoscapeState* state, const std::map<OpenXcom::Region*, int> &displayHiddenAlienActivityRegions, const std::map<OpenXcom::Country*, int> &displayHiddenAlienActivityCountries);
 	~HiddenAlienActivityState();
 	void btnOkClick(Action* action);
 	void btnCancelClick(Action* action);

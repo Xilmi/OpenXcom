@@ -54,13 +54,11 @@ namespace OpenXcom
 HiddenAlienActivityState::HiddenAlienActivityState
 (
 	GeoscapeState* state,
-	std::map<OpenXcom::Region*, int> displayHiddenAlienActivityRegions,
-	std::map<OpenXcom::Country*, int> displayHiddenAlienActivityCountries
+	const std::map<OpenXcom::Region*, int> &displayHiddenAlienActivityRegions,
+	const std::map<OpenXcom::Country*, int> &displayHiddenAlienActivityCountries
 )
 	:
-	_state(state),
-	_displayHiddenAlienActivityRegions(displayHiddenAlienActivityRegions),
-	_displayHiddenAlienActivityCountries(displayHiddenAlienActivityCountries)
+	_state(state)
 {
 	_screen = false;
 
@@ -133,7 +131,7 @@ HiddenAlienActivityState::HiddenAlienActivityState
 
 	// populate alien activity lists
 
-	for (std::pair<Region* const, int> displayHiddenAlienActivityRegionEntry : _displayHiddenAlienActivityRegions)
+	for (const std::pair<Region* const, int> &displayHiddenAlienActivityRegionEntry : displayHiddenAlienActivityRegions)
 	{
 		Region* region = displayHiddenAlienActivityRegionEntry.first;
 		int activity = displayHiddenAlienActivityRegionEntry.second;
@@ -159,7 +157,7 @@ HiddenAlienActivityState::HiddenAlienActivityState
 
 	}
 
-	for (std::pair<Country* const, int> displayHiddenAlienActivitycountryEntry : _displayHiddenAlienActivityCountries)
+	for (const std::pair<Country* const, int> &displayHiddenAlienActivitycountryEntry : displayHiddenAlienActivityCountries)
 	{
 		Country* country = displayHiddenAlienActivitycountryEntry.first;
 		int activity = displayHiddenAlienActivitycountryEntry.second;

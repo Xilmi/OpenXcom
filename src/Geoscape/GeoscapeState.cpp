@@ -2067,7 +2067,7 @@ void GeoscapeState::time30Minutes()
 
 	// update hidden alien activity
 
-	if (Options::displayHiddenAlienActivity != 0)
+	if (Options::displayHiddenAlienActivity)
 	{
 		std::map<OpenXcom::Region*, int> displayHiddenAlienActivityRegions;
 		std::map<OpenXcom::Country*, int> displayHiddenAlienActivityCountries;
@@ -2077,9 +2077,10 @@ void GeoscapeState::time30Minutes()
 		{
 			// old value
 
-			int oldHiddenAlienActivity = _hiddenAlienActivityRegions[region];
+			bool hasActivity = _hiddenAlienActivityRegions.count(region);
+			const int oldHiddenAlienActivity = hasActivity ? _hiddenAlienActivityRegions[region] : 0;
 
-			if (hiddenUfoRegions.find(region) != hiddenUfoRegions.end()) // there are hidden UFOs
+			if (hiddenUfoRegions.count(region)) // there are hidden UFOs
 			{
 				// increment points
 
@@ -2103,7 +2104,10 @@ void GeoscapeState::time30Minutes()
 			{
 				// reset accumulated activity
 
-				_hiddenAlienActivityRegions.erase(region);
+				if (hasActivity)
+				{
+					_hiddenAlienActivityRegions.erase(region);
+				}
 
 				// show information for detailed notification
 
@@ -2120,10 +2124,10 @@ void GeoscapeState::time30Minutes()
 		for (OpenXcom::Country* country : *_game->getSavedGame()->getCountries())
 		{
 			// old value
+			bool hasActivity = _hiddenAlienActivityCountries.count(country);
+			const int oldHiddenAlienActivity = hasActivity ? _hiddenAlienActivityCountries[country] : 0;
 
-			int oldHiddenAlienActivity = _hiddenAlienActivityCountries[country];
-
-			if (hiddenUfoCountries.find(country) != hiddenUfoCountries.end()) // there are hidden UFOs
+			if (hiddenUfoCountries.count(country)) // there are hidden UFOs
 			{
 				// increment points
 
@@ -2143,7 +2147,10 @@ void GeoscapeState::time30Minutes()
 			{
 				// reset accumulated activity
 
-				_hiddenAlienActivityCountries.erase(country);
+				if (hasActivity)
+				{
+					_hiddenAlienActivityCountries.erase(country);
+				}
 
 				// show information for detailed notification if activity ceased
 
