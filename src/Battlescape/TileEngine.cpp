@@ -5982,14 +5982,14 @@ bool TileEngine::validTerrainMeleeRange(BattleAction* action)
 	Pathfinding::directionToVector(direction, &p);
 	Tile* originTile = _save->getTile(pos);
 
-	if (originTile && originTile->getTerrainLevel() <= -16 && !_save->isAltPressed(true))
+	if (originTile && originTile->getTerrainLevel() <= -16 && !_save->isCtrlPressed(true))
 	{
 		// if we are on the upper part of stairs, target one tile above. pWWWa: let leave at the same tile altitude with pressed Alt (if there are need to hit stair under feet).
 		pos += Position(0, 0, 1);
 		originTile = _save->getTile(pos);
 	}
 
-	Tile* originTile2 = originTile;
+	Tile* originTile2 =		  originTile;
 	Tile* neighbouringTile =  _save->getTile(pos + p);
 	Tile* neighbouringTile2 = nullptr;
 	Tile* neighbouringTile3 = nullptr;
@@ -6063,7 +6063,7 @@ bool TileEngine::validTerrainMeleeRange(BattleAction* action)
 			MapData* obj = tt->getMapData(tp);
 			if (obj)
 			{
-				if (!(Options::diagTerrainMelee && tt->getSavedGame()->isAltPressed(true))) // Forced hit terrain melee (helper)
+				if (!(Options::diagTerrainMelee && tt->getSavedGame()->isCtrlPressed(true))) // Forced hit terrain melee (helper)
 				{
 					if (dir > -1 && tp == O_OBJECT)
 					{
@@ -6112,73 +6112,72 @@ bool TileEngine::validTerrainMeleeRange(BattleAction* action)
 		switch (direction)
 		{
 		case 0: // North
-			if (setTarget(originTile, O_NORTHWALL, action)  ||
-				setTarget(originTile2, O_NORTHWALL, action) ||
-				setTarget(neighbouringTile2, O_WESTWALL, action) && size) // parallel wall between 2 parts of big unit
+				if (setTarget(originTile, O_NORTHWALL, action)  ||
+					setTarget(originTile2, O_NORTHWALL, action) ||
+					setTarget(neighbouringTile2, O_WESTWALL, action) && size) // parallel wall between 2 parts of big unit
 				return true;
-			break;
+				break;
 
 		case 2: // East
-			if (setTarget(neighbouringTile, O_WESTWALL, action)  ||
-				setTarget(neighbouringTile2, O_WESTWALL, action) ||
-				setTarget(neighbouringTile2, O_NORTHWALL, action) && size) // parallel wall between 2 parts of big unit
+				if (setTarget(neighbouringTile, O_WESTWALL, action)  ||
+					setTarget(neighbouringTile2, O_WESTWALL, action) ||
+					setTarget(neighbouringTile2, O_NORTHWALL, action) && size) // parallel wall between 2 parts of big unit
 				return true;
-			break;
+				break;
 
 		case 4: // South
-			if (setTarget(neighbouringTile, O_NORTHWALL, action)  ||
-				setTarget(neighbouringTile2, O_NORTHWALL, action) ||
-				setTarget(neighbouringTile2, O_WESTWALL, action) && size) // parallel wall between 2 parts of big unit
+				if (setTarget(neighbouringTile, O_NORTHWALL, action)  ||
+					setTarget(neighbouringTile2, O_NORTHWALL, action) ||
+					setTarget(neighbouringTile2, O_WESTWALL, action) && size) // parallel wall between 2 parts of big unit
 				return true;
-			break;
+				break;
 
 		case 6: // West
-			if (setTarget(originTile, O_WESTWALL, action) ||
-				setTarget(originTile2, O_WESTWALL, action) ||
-				setTarget(neighbouringTile2, O_NORTHWALL, action) && size) // parallel wall between 2 parts of big unit
+				if (setTarget(originTile, O_WESTWALL, action)  ||
+					setTarget(originTile2, O_WESTWALL, action) ||
+					setTarget(neighbouringTile2, O_NORTHWALL, action) && size) // parallel wall between 2 parts of big unit
 				return true;
-			break;
+				break;
 
-		case 1:                                                      // North-East
-			if (setTarget(neighbouringTile, O_WESTWALL, action)   || // 3
-				setTarget(neighbouringTile3, O_NORTHWALL, action) || // 4
-				setTarget(originTile, O_NORTHWALL, action)		  || // 1
-				setTarget(neighbouringTile3, O_WESTWALL, action))    // 2
+		case 1: // North-East
+				if (setTarget(neighbouringTile, O_WESTWALL, action)   ||
+					setTarget(neighbouringTile3, O_NORTHWALL, action) ||
+					setTarget(originTile, O_NORTHWALL, action)		  ||
+					setTarget(neighbouringTile3, O_WESTWALL, action))
 				return true;
-			break;
+				break;
 
-		case 3:                                                      // South-East
-			if (setTarget(neighbouringTile, O_WESTWALL, action)   || // 3
-				setTarget(neighbouringTile, O_NORTHWALL, action)  || // 4
-				setTarget(neighbouringTile3, O_NORTHWALL, action) || // 1
-				setTarget(neighbouringTile2, O_WESTWALL, action))    // 2
+		case 3: // South-East
+				if (setTarget(neighbouringTile, O_WESTWALL, action)   ||
+					setTarget(neighbouringTile, O_NORTHWALL, action)  ||
+					setTarget(neighbouringTile3, O_NORTHWALL, action) ||
+					setTarget(neighbouringTile2, O_WESTWALL, action))
 				return true;
-			break;
+				break;
 
-		case 5:                                                       // North-East
-			if (setTarget(neighbouringTile, O_NORTHWALL, action)  ||  // 4
-				setTarget(neighbouringTile2, O_NORTHWALL, action) ||  // 1
-				setTarget(neighbouringTile2, O_WESTWALL, action)  ||  // 3
-				setTarget(originTile, O_WESTWALL, action))            // 2
+		case 5: // North-East
+				if (setTarget(neighbouringTile, O_NORTHWALL, action)  ||
+					setTarget(neighbouringTile2, O_NORTHWALL, action) ||
+					setTarget(neighbouringTile2, O_WESTWALL, action)  ||
+					setTarget(originTile, O_WESTWALL, action))
 				return true;
-			break;
+				break;
 
-		case 7:                                                      // North-West
-			if (setTarget(neighbouringTile3, O_WESTWALL, action)  || // 4
-				setTarget(neighbouringTile2, O_NORTHWALL, action) || // 3
-				setTarget(originTile, O_NORTHWALL, action)		  || // 2
-				setTarget(originTile, O_WESTWALL, action))           // 1
+		case 7:	// North-West
+				if (setTarget(neighbouringTile3, O_WESTWALL, action)  ||
+					setTarget(neighbouringTile2, O_NORTHWALL, action) ||
+					setTarget(originTile, O_NORTHWALL, action)		  ||
+					setTarget(originTile, O_WESTWALL, action))
 				return true;
 		}
 
 		if (setTarget(neighbouringTile, O_OBJECT, action) ||
 			setTarget(neighbouringTile2, O_OBJECT, action) && size && !(direction % 2))
-		{
-			// All directions: target the object on the neighbouring tile  + big unit's second part at non-diagonal direction included
+		{ // All directions: target the object on the neighbouring tile  + big unit's second part at non-diagonal direction included
 			return true;
 		}
 
-		if (_save->isAltPressed(true))
+		if (_save->isCtrlPressed(true))
 		{ // Forced terrain melee helper. Suitable for non-proper tile configuration aiming (etc. objecs part in floor tile "slot")
 			if (setTarget(neighbouringTile, O_NORTHWALL, action) ||
 				setTarget(neighbouringTile, O_WESTWALL, action)  ||
