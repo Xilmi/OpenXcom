@@ -192,6 +192,7 @@ private:
 	ScriptValues<Armor> _scriptValues;
 	std::vector<int> _customArmorPreviewIndex;
 	Sint8 _allowsRunning, _allowsStrafing, _allowsSneaking, _allowsKneeling, _allowsMoving;
+	bool _canFloatBob;
 	bool _isPilotArmor;
 	bool _allowTwoMainWeapons;
 	bool _instantWoundRecovery;
@@ -509,6 +510,8 @@ public:
 	int getGroup() const { return _group; }
 	/// Get the list weight for this armor.
 	int getListOrder() const { return _listOrder; }
+	/// Can this unit bob in floating state, if floatUnitBobNShade is enabled?
+	bool canFloatBob() const { return _canFloatBob; }
 };
 
 }
